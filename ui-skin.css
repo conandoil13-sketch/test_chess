@@ -1,0 +1,38 @@
+/* UI 이미지 연결 슬롯: url('./assets/ui/파일명.png')을 넣으세요.
+   none이면 현재 임시 화면을 사용합니다. 경로는 이 파일을 기준으로 합니다. */
+:root {
+  --ui-explorer-panel: none;
+  --ui-zoom-panel: none;
+  --ui-inspection-background: none;
+  --ui-check-button: none;
+  --ui-cancel-button: none;
+  --ui-door-top: none;
+  --ui-door-left: none;
+  --ui-door-right: none;
+}
+#exploration .hud-panel { background-image: var(--ui-explorer-panel); background-size: 100% 100%; background-repeat: no-repeat; }
+#exploration .map-footer { background-image: var(--ui-zoom-panel); background-size: 100% 100%; background-repeat: no-repeat; }
+/* 다중 배경으로 기존 검사 화면의 배경을 유지합니다. */
+#inspection .inspection-inner { background-image: var(--ui-inspection-background), radial-gradient(circle at 80% 40%, #274c42 0%, transparent 37%), repeating-linear-gradient(0deg, transparent 0 59px, #ffffff08 60px), repeating-linear-gradient(90deg, transparent 0 59px, #ffffff08 60px); background-size: cover, auto, auto, auto; background-position: center; background-repeat: no-repeat, repeat, repeat, repeat; }
+#inspection #check { background-image: var(--ui-check-button); background-size: 100% 100%; background-repeat: no-repeat; }
+#inspection #close { background-image: var(--ui-cancel-button); background-size: 100% 100%; background-repeat: no-repeat; }
+#transition .door-top { background-image: var(--ui-door-top), repeating-linear-gradient(90deg, transparent 0 95px, #9eb39b1a 96px 98px), repeating-linear-gradient(0deg, transparent 0 60px, #0e1a1766 61px 64px); background-size: 100% 100%, auto, auto; }
+#transition .door-left { background-image: var(--ui-door-left), repeating-linear-gradient(90deg, transparent 0 95px, #9eb39b1a 96px 98px), repeating-linear-gradient(0deg, transparent 0 60px, #0e1a1766 61px 64px); background-size: 100% 100%, auto, auto; }
+#transition .door-right { background-image: var(--ui-door-right), repeating-linear-gradient(90deg, transparent 0 95px, #9eb39b1a 96px 98px), repeating-linear-gradient(0deg, transparent 0 60px, #0e1a1766 61px 64px); background-size: 100% 100%, auto, auto; }
+/* Uploaded font: provisional application to the test interface. */
+@font-face {
+  font-family: 'NeoDGM';
+  src: url('./assets/fonts/neodgm.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+body, button, select, input, output,
+#exploration .hud-header h1, #exploration .hud-overline,
+#exploration .hud-heading, #exploration .map-header h2,
+#exploration .panel-title, #exploration .hud-label,
+#exploration .hud-guide b, #exploration .zoom-controls output,
+#inspection .inspection-header, #inspection footer,
+#inspection .eyebrow, #inspection .route strong,
+#inspection .scanner small, #inspection .scanner-frame b,
+#transition .hangar-door span { font-family: 'NeoDGM', sans-serif; }

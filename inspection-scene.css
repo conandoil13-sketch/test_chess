@@ -1,0 +1,167 @@
+/* Provisional inspection-station scene. Layout and materials are a visual study. */
+#inspection { color: #e8e3d1; background: #131a18; }
+#inspection .inspection-inner { position: relative; overflow: hidden; min-height: 100%; padding: clamp(20px, 3.5vw, 54px) clamp(20px, 5vw, 80px); background-color: #242d28; background-image: var(--ui-inspection-background), radial-gradient(ellipse at 50% 0, #c1bd9160, transparent 50%), linear-gradient(180deg, transparent 68%, #17221e 68%, #111916 100%), repeating-linear-gradient(90deg, #ffffff08 0 1px, transparent 1px 15%), linear-gradient(115deg, #1a2420, #4d5346 48%, #1b2622); background-size: cover, auto, auto, auto, auto; }
+#inspection .inspection-header, #inspection footer { position: relative; z-index: 1; border-color: #d9ddbc44; color: #c1cbb7; }
+#inspection .inspection-header { align-items: center; padding-bottom: 16px; }
+.station-brand { display: flex; align-items: center; gap: 12px; }
+.station-emblem { display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid #adb99c; color: #e2dcb6; font-size: 24px; }
+.station-brand span:not(.station-emblem), .station-id span, .document-head span { display: block; font-size: 10px; letter-spacing: .12em; color: #b4bda8; }
+.station-brand strong, .station-id strong, .document-head strong { display: block; margin-top: 5px; font-size: 15px; letter-spacing: .04em; color: #f0eddb; }
+.station-id { text-align: right; }
+#inspection .inspection-content { position: relative; z-index: 1; width: min(1200px,100%); margin: auto; padding: 28px 0 40px; }
+.station-sign { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 20px; }
+#inspection .eyebrow { color: #bec8a9; font-size: 10px; letter-spacing: .14em; }
+#inspection h2 { margin: 8px 0 0; font-size: clamp(30px,4vw,52px); letter-spacing: -.03em; }
+.station-indicator { display: flex; align-items: center; gap: 8px; color: #d2dec1; font-size: 12px; white-space: nowrap; }
+.station-indicator i, .booth-light { width: 8px; height: 8px; border-radius: 50%; background: #bad398; box-shadow: 0 0 10px #b6e29c; }
+#inspection .inspection-body { display: grid; grid-template-columns: 1.1fr .9fr; gap: clamp(18px,3vw,36px); align-items: stretch; padding: 0; }
+.checkpoint-booth { position: relative; min-width: 0; padding: clamp(16px,3vw,30px); background: linear-gradient(130deg,#6b7060,#3d4b40 45%,#26372f); border: 2px solid #a9ad93; box-shadow: inset 0 0 0 5px #303e34, 0 16px 30px #0007; }
+.booth-top { display: flex; justify-content: space-between; gap: 10px; padding-bottom: 15px; color: #e0e2ca; font-size: 12px; border-bottom: 1px solid #c6ccb273; }
+.booth-top span:last-child { color: #b3bba3; font-size: 10px; }
+#inspection .scanner { margin: 20px auto 0; width: min(100%,340px); min-height: 240px; border: 8px solid #263b34; outline: 2px solid #a3b5a0; background: radial-gradient(circle at 50% 35%,#31594a,#10241e 80%); box-shadow: inset 0 0 28px #000a, 0 4px 0 #9ca38d; }
+#inspection .scanner-frame { width: 130px; height: 130px; border-color: #a0d8b099; }
+#inspection .scanner-frame b { color: #d5f2d7; text-shadow: 0 0 12px #7de6af77; }
+#inspection .scanner small { color: #bdd8c6; }
+.booth-instruction { display: flex; align-items: center; gap: 10px; margin: 20px auto 13px; width: min(100%,340px); min-height: 35px; color: #e1e7d1; font-size: 12px; line-height: 1.5; }
+.booth-instruction p { margin: 0; }.booth-light { flex: none; }
+.booth-counter { display: flex; justify-content: space-between; gap: 8px; padding: 13px 14px; background: #26352d; border-top: 4px solid #a8ae94; color: #aebda8; font-size: 10px; box-shadow: 0 5px 0 #17241e; }
+.inspection-document { background: #dedbc8; color: #26342b; padding: clamp(18px,3vw,32px); border-top: 6px solid #9aab8a; box-shadow: 0 14px 30px #0007, inset 0 0 0 1px #fff9; }
+.document-head { display: flex; justify-content: space-between; gap: 10px; border-bottom: 2px solid #526758; padding-bottom: 16px; }.document-head span { color: #5e7264; }.document-head strong { color: #263d30; font-size: 16px; }.document-head .document-number { white-space: nowrap; }
+#inspection .route { margin: 0; padding: 22px 0; gap: 12px; grid-template-columns: 1fr auto 1fr; border-top: 0; border-bottom: 1px solid #8f9b86; }
+#inspection .route div:last-child { grid-column: 1 / -1; margin-top: 8px; }
+#inspection .route span { color: #617260; margin-bottom: 7px; }
+#inspection .route strong { color: #253e31; font-size: clamp(19px,2vw,26px); }
+#inspection .route-arrow { color: #607a61; font-size: 23px; }
+#inspection .decision { padding-top: 20px; }
+#inspection .decision .eyebrow { color: #607260; margin: 0; }
+#inspection #result { color: #243d30; font-size: clamp(23px,2.4vw,34px); margin: 12px 0; }
+#inspection #result.approved { color: #27623d; } #inspection #result.denied { color: #a13d32; }
+#inspection #detail { color: #526657; font-size: 13px; line-height: 1.6; }
+#inspection .actions { margin-top: 23px; gap: 9px; }
+#inspection .actions button { padding: 13px 16px; font-size: 14px; border-radius: 0; }
+#inspection .actions button:first-child { color: #f1f0de; background-color: #294d3c; border: 1px solid #294d3c; }
+#inspection .actions button:last-child { color: #405346; border: 1px solid #849483; }
+#inspection #simulation-note { color: #738374; font-size: 11px; line-height: 1.5; margin: 20px 0 0; }
+#inspection footer { padding-top: 15px; }
+@media (max-width: 700px) {
+ #inspection .inspection-inner { overflow: visible; padding: 18px; }
+ #inspection .inspection-header { font-size: 9px; }.station-brand span:not(.station-emblem) { font-size: 8px; }.station-id strong { font-size: 10px; }
+ #inspection .inspection-content { padding: 24px 0 30px; }.station-indicator { font-size: 10px; }
+ #inspection .inspection-body { grid-template-columns: 1fr; }.checkpoint-booth { padding: 16px; }
+ #inspection .scanner { min-height: 170px; margin-top: 16px; }.booth-instruction { margin: 13px auto; }.inspection-document { padding: 20px; }
+}
+/* Spatial study: wall, inspection window, lighting and the front counter. */
+#inspection .inspection-inner { isolation: isolate; background-image: var(--ui-inspection-background), radial-gradient(ellipse at 50% 0, #d3caa248, transparent 52%), linear-gradient(180deg,#27342d 0%,#4b5145 72%,#1a231d 72%,#131b16 100%); }
+.station-architecture { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.station-ceiling { position: absolute; top: 0; left: 0; right: 0; height: 12%; background: linear-gradient(#101b17,#27352b 65%,#53604e 66%,#1a2820 75%); box-shadow: 0 8px 18px #0009; display: flex; align-items: end; justify-content: space-around; padding-bottom: 12px; }
+.station-ceiling span { width: min(19%,220px); height: 5px; background: #dfe2bf; box-shadow: 0 0 12px 4px #dddfac66, 0 12px 30px 9px #d6ddb34a; }
+.station-wall { position: absolute; inset: 12% 0 20%; background: repeating-linear-gradient(90deg, transparent 0 17%, #121c1777 17% 17.4%), linear-gradient(90deg,#26362e,#616658 50%,#26362e); border-bottom: 9px solid #17271e; }
+.window-frame { position: absolute; top: 9%; left: 14%; right: 14%; bottom: 5%; border: clamp(8px,1vw,16px) solid #24372d; box-shadow: inset 0 0 0 2px #a2ad95,0 8px 18px #0008; background: #14261f; }
+.window-glass { width: 100%; height: 100%; border: 3px solid #718476; background: linear-gradient(112deg, transparent 0 32%, #e6f0d017 32% 38%,transparent 38% 59%,#e6f0d010 59% 61%,transparent 61%), linear-gradient(180deg,#1c342d,#334b3e); box-shadow: inset 0 0 35px #0a1c15; }
+.window-glass::before { content: ''; display: block; position: absolute; inset: 0 49.7%; background: #263c30; box-shadow: 2px 0 #a1af94; }
+.window-stripe { position: absolute; left: 0; right: 0; top: 62%; height: 5%; background: #b4c4a336; border-top: 1px solid #ced6b355; border-bottom: 1px solid #17291faa; }
+.wall-panel { position: absolute; top: 16%; bottom: 7%; width: 8%; border: 4px solid #273b2f; background: repeating-linear-gradient(0deg,#485a4b 0 13%,#273d30 13% 15%); box-shadow: inset 0 0 0 1px #a2aa8a55; }.wall-panel-left { left: 3%; }.wall-panel-right { right: 3%; }
+.wall-number { position: absolute; left: 3.5%; top: 4%; color: #b4c1a8; font-size: 11px; letter-spacing: .13em; }
+.station-floor { position: absolute; inset: 80% 0 0; background: repeating-linear-gradient(90deg,transparent 0 12%,#8491801c 12% 12.2%), linear-gradient(#27342b,#111b16); }
+.station-counter { position: absolute; left: -3%; right: -3%; bottom: 0; height: 14%; z-index: 1; filter: drop-shadow(0 -9px 12px #0009); }
+.counter-top { height: 24%; background: linear-gradient(#a1ab92 0 15%,#5c6d5c 16% 43%,#34473a 45% 68%,#17271e 70%); border-top: 2px solid #c2c8a7; }
+.counter-face { height: 76%; padding: 12px 5%; display: flex; justify-content: space-between; color: #84998a; font-size: 10px; letter-spacing: .15em; background: repeating-linear-gradient(90deg,transparent 0 22%,#17251d 22% 22.4%),linear-gradient(#48594a,#26382d); border-top: 3px solid #15251b; }
+#inspection .inspection-content { z-index: 2; }
+#inspection .inspection-header, #inspection footer { z-index: 3; }
+#inspection footer { background: #17271ec9; padding: 12px; border: 1px solid #a7b69a55; }
+.checkpoint-booth { box-shadow: inset 0 0 0 5px #303e34, 0 4px 0 #a3aa91, 0 20px 30px #0009; }
+.inspection-document { box-shadow: 0 4px 0 #858b76, 0 20px 30px #0009, inset 0 0 0 1px #fff9; }
+@media (max-width:700px) { .station-ceiling { height: 7%; }.station-wall { inset: 7% 0 10%; }.window-frame { left: 7%; right: 7%; }.wall-panel { display: none; }.station-floor { inset: 90% 0 0; }.station-counter { height: 6%; }.station-indicator { display: none; } }
+#inspection .scanner video:not([hidden]) { display: block; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+#inspection .scanner-frame, #inspection .scanner small { z-index: 1; }
+#inspection.camera-live .scanner-frame b { display: none; }
+#inspection.camera-live .scanner-frame { box-shadow: 0 0 0 999px #07140e30; }
+#inspection.camera-live .scanner small { background: #0a1e17b8; padding: 4px 6px; text-align: center; }
+/* In live camera mode, scan across the whole camera viewport. */
+#inspection.camera-live .scanner-frame i { display: none; }
+#inspection.camera-live .scanner::after { content: ''; position: absolute; z-index: 2; left: 0; right: 0; height: 2px; background: #b7ffe0; box-shadow: 0 0 12px 3px #8effc9a8; pointer-events: none; animation: camera-scan 2s ease-in-out infinite alternate; }
+@keyframes camera-scan { from { top: 2%; } to { top: 97%; } }
+/* The targeting frame follows the full live video rather than the old center box. */
+#inspection.camera-live .scanner-frame { position: absolute; inset: 8px; width: auto; height: auto; box-shadow: none; pointer-events: none; }
+#inspection.camera-live .scanner-frame::before, #inspection.camera-live .scanner-frame::after { display: none; }
+/* Scan covers the entire display in both waiting and live-camera states. */
+#inspection .scanner-frame, #inspection.camera-live .scanner-frame { position: absolute; inset: 8px; width: auto; height: auto; box-shadow: none; pointer-events: none; }
+#inspection .scanner-frame::before, #inspection .scanner-frame::after { display: none; }
+#inspection .scanner-frame i { display: none; }
+#inspection .scanner::after, #inspection.camera-live .scanner::after { content: ''; position: absolute; z-index: 2; left: 0; right: 0; height: 2px; background: #b7ffe0; box-shadow: 0 0 12px 3px #8effc9a8; pointer-events: none; animation: camera-scan 2s ease-in-out infinite alternate; }
+/* The record is handed over after the checkpoint doors begin to open. */
+#inspection .inspection-document { position: relative; transform-origin: 50% 100%; animation: hand-out-record 2.3s cubic-bezier(.42,0,.2,1) .65s both; }
+@keyframes hand-out-record {
+  0% { opacity: 0; transform: translateY(90px) scale(.92) rotate(-2deg); box-shadow: 0 2px 4px #0005; }
+  25% { opacity: 1; }
+  72% { transform: translateY(-5px) scale(1.01) rotate(.4deg); }
+  100% { opacity: 1; transform: translateY(0) scale(1) rotate(0); }
+}
+@media (prefers-reduced-motion: reduce) { #inspection .inspection-document { animation: none; } }
+/* The paper approaches across the counter in perspective, then becomes readable. */
+#inspection .inspection-body { perspective: 1100px; perspective-origin: 50% 35%; }
+#inspection .inspection-document { backface-visibility: hidden; transform-origin: 50% 100%; }
+@keyframes hand-out-record {
+  0% { opacity: 0; transform: translateY(45px) rotateX(68deg); box-shadow: 0 3px 5px #0005; }
+  12% { opacity: 1; }
+  65% { transform: translateY(10px) rotateX(22deg); box-shadow: 0 10px 18px #0007; }
+  100% { opacity: 1; transform: translateY(0) rotateX(0); box-shadow: 0 4px 0 #858b76, 0 20px 30px #0009, inset 0 0 0 1px #fff9; }
+}
+/* WebGL paper overlays the interactive record during its entrance. */
+#inspection .paper-stage { position: relative; min-width: 0; }
+#inspection .paper-stage .inspection-document { height: 100%; animation: none; }
+#inspection .paper-stage.paper-animating .inspection-document { visibility: hidden; }
+#paper-animation:not([hidden]) { display: block; position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+/* Let the paper travel outside its final rectangle without being clipped. */
+#paper-animation:not([hidden]) { inset: -50%; width: 200%; height: 200%; }
+/* Camera classification is simulated; this only visualizes its progress. */
+#inspection .camera-analysis { display: none; position: absolute; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
+#inspection.camera-scanning .camera-analysis { display: block; background: #84ffc314; animation: scan-flash .32s ease-out; }
+#inspection.camera-scanning .scanner::after { display: none; }
+.analysis-corners { position: absolute; inset: 12px; border: 1px solid #baffd999; box-shadow: inset 0 0 24px #6bffb047; }
+.analysis-beam { position: absolute; left: 0; right: 0; height: 24%; background: linear-gradient(transparent,#a3ffd44f 85%,#d6ffef); box-shadow: 0 4px 16px #74ffc48c; animation: analysis-sweep .8s ease-in-out 3 alternate both; }
+.camera-analysis span { position: absolute; left: 16px; bottom: 19px; color: #d4ffe8; font-size: 10px; letter-spacing: .14em; text-shadow: 0 1px 4px #11271e; }
+.analysis-progress { position: absolute; right: 16px; bottom: 20px; width: 35%; height: 4px; background: #163e30b8; }
+.analysis-progress i { display: block; width: 100%; height: 100%; transform-origin: left; background: #b8ffe0; animation: analysis-progress 2.4s linear both; }
+@keyframes analysis-sweep { from { top: -24%; } to { top: 100%; } }
+@keyframes analysis-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes scan-flash { from { background: #e4ffef8c; } to { background: #84ffc314; } }
+@media (prefers-reduced-motion: reduce) { #inspection .camera-analysis, #inspection .analysis-beam, #inspection .analysis-progress i { animation: none; } #inspection .analysis-beam { top: 45%; } }
+/* Optional user artwork. The camera, effects and document stay on separate layers. */
+#inspection .scene-layer { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+#inspection .scene-layer[hidden], #inspection .terminal-layer[hidden] { display: none; }
+#inspection .scene-background { z-index: 0; }
+#inspection .scene-window { z-index: 1; }
+#inspection .scene-counter { z-index: 2; }
+#inspection .station-architecture.custom-background .station-ceiling,
+#inspection .station-architecture.custom-background .wall-number,
+#inspection .station-architecture.custom-background .wall-panel,
+#inspection .station-architecture.custom-background .station-floor { visibility: hidden; }
+#inspection .station-architecture.custom-background .station-wall { background: transparent; border: 0; }
+#inspection .station-architecture.custom-window .window-frame,
+#inspection .station-architecture.custom-counter .station-counter { visibility: hidden; }
+#inspection .terminal-layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; pointer-events: none; }
+#inspection .checkpoint-booth.custom-terminal { background: transparent; border-color: transparent; box-shadow: none; }
+#inspection .checkpoint-booth.custom-terminal .booth-top,
+#inspection .checkpoint-booth.custom-terminal .booth-instruction,
+#inspection .checkpoint-booth.custom-terminal .booth-counter,
+#inspection .checkpoint-booth.custom-terminal .scanner { position: relative; z-index: 1; }
+#inspection .checkpoint-booth.custom-terminal .booth-counter { background: transparent; border-color: transparent; box-shadow: none; }
+#inspection .checkpoint-booth.custom-terminal .scanner { border-color: transparent; outline: none; box-shadow: none; }
+#ui-layer-errors:not([hidden]) { padding: 8px; color: #ffe6df; background: #79342f; }
+/* Align the live display with the transparent opening in the 1024×1200 terminal template. */
+#inspection .checkpoint-booth.custom-terminal { min-height: 420px; }
+#inspection .checkpoint-booth.custom-terminal .scanner { position: absolute; left: 10.35%; top: 15.75%; width: 79.2%; height: 47.66%; min-height: 0; margin: 0; }
+#inspection .checkpoint-booth.custom-terminal .booth-instruction { position: absolute; left: 10.35%; top: 70%; width: 79.2%; max-width: none; margin: 0; }
+#inspection .checkpoint-booth.custom-terminal .booth-counter { position: absolute; left: 10.35%; bottom: 5%; width: 79.2%; }
+@media (max-width: 700px) { #inspection .checkpoint-booth.custom-terminal { min-height: 360px; } }
+/* Desktop: preserve the artwork's 1024:1200 proportions as the window changes. */
+@media (min-width: 701px) {
+  #inspection .checkpoint-booth.custom-terminal {
+    width: min(100%, calc((100dvh - 220px) * 0.853333));
+    min-height: 0;
+    aspect-ratio: 1024 / 1200;
+    align-self: center;
+    justify-self: center;
+  }
+}
