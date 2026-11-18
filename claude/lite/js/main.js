@@ -67,7 +67,8 @@ function focusCell(p) { camT.x = (p.x + 0.5) * CELL; camT.y = (p.y + 0.5) * CELL
 let camStr = '';
 const applyCam = () => {
   // 라이트: 소수점 둘째 자리까지만 쓰고, 값이 같으면 스타일을 건드리지 않는다
-  const s = `rotateX(${TILT}deg) scale(${cam.z.toFixed(4)}) translate(${(-cam.x).toFixed(1)}px, ${(-cam.y).toFixed(1)}px)`;
+  const z = cam.z.toFixed(4);
+  const s = `rotateX(${TILT}deg) scale3d(${z}, ${z}, ${z}) translate(${(-cam.x).toFixed(1)}px, ${(-cam.y).toFixed(1)}px)`;
   if (s !== camStr) { camStr = s; els.camera.style.transform = s; }
 };
 

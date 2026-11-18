@@ -65,7 +65,7 @@ function zoomBy(f) {
 }
 function focusCell(p) { camT.x = (p.x + 0.5) * CELL; camT.y = (p.y + 0.5) * CELL; clampCam(); }
 const applyCam = () => {
-  els.camera.style.transform = `rotateX(${TILT}deg) scale(${cam.z}) translate(${-cam.x}px, ${-cam.y}px)`;
+  els.camera.style.transform = `rotateX(${TILT}deg) scale3d(${cam.z}, ${cam.z}, ${cam.z}) translate(${-cam.x}px, ${-cam.y}px)`;
 };
 
 // ---------- 말 ----------
