@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CB-120 이동 흐름 테스트</title>
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./ui-skin.css">
+  <link rel="stylesheet" href="./inspection-scene.css">
+</head>
+<body>
+  <main id="exploration">
+    <header class="hud-header"><div class="hud-brand"><span class="hud-mark" aria-hidden="true">✦</span><div><span class="hud-overline">WORLD EXPLORATION / TEST</span><h1>CB-120</h1></div></div><div class="hud-header-right"><span class="hud-live"><i></i> 탐험 모드</span><span>시각 · 기능 테스트</span></div></header>
+    <details class="test-settings"><summary aria-label="검사 테스트 설정" title="검사 테스트 설정">⚙</summary><div class="test-settings-panel"><label for="inspection-mode">검사 방식 테스트</label><select id="inspection-mode"><option value="nfc">NFC 통행증</option><option value="camera">카메라 이미지 인식</option></select><p>카메라 모드는 실제 영상을 사용하며, 인식 결과는 시뮬레이션입니다.</p><p id="ui-layer-errors" role="status" hidden></p></div></details>
+    <div class="game-layout">
+      <aside class="hud-panel" aria-label="탐험 정보">
+        <div class="panel-title"><span>EXPLORER</span><span>01</span></div>
+        <h2 class="hud-heading">탐험 정보</h2>
+        <div class="hud-field"><label for="rank">캐릭터 계급</label><select id="rank"><option value="pawn">폰</option><option value="knight">나이트</option><option value="rook">룩</option><option value="bishop">비숍</option><option value="queen">퀸</option><option value="king">킹</option></select></div>
+        <div class="hud-field"><span class="hud-label">현재 상태</span><p id="status" role="status" aria-live="polite"></p></div>
+        <p id="sprite-errors" role="status" hidden></p>
+        <div class="hud-guide"><span class="hud-label">이동 방법</span><p><b>01</b> 내 캐릭터 선택</p><p><b>02</b> 목적지 선택</p><p><b>03</b> 이동관리국 검사</p></div>
+        <p class="hud-note">테스트 가정: 20×20 격자, 장애물 없음. 폰은 위쪽 한 칸으로 이동하며, 검사는 기본 행마법만 확인합니다.</p>
+      </aside>
+      <section class="map-panel" aria-label="월드 지도">
+        <div class="map-header"><div><span class="hud-overline">PLANET SURFACE / 20 × 20</span><h2>월드 탐험</h2></div><span class="map-hint">WASD 이동 · Q/E 확대/축소</span></div>
+        <div class="map-area"><div class="world-haze" aria-hidden="true"></div><div class="world-stage"><div id="map" aria-label="20 곱하기 20 테스트 지도"></div></div><p class="world-caption">CB-120 / WORLD VIEW</p></div>
+        <div class="map-footer"><span>WASD 이동 · Q 축소 / E 확대</span><div class="zoom-controls"><button id="zoom-out" type="button" aria-label="지도 축소">−</button><label for="zoom">확대</label><input id="zoom" type="range" min="30" max="150" step="10" value="70"><button id="zoom-in" type="button" aria-label="지도 확대">+</button><output id="zoom-value" for="zoom">70%</output></div></div>
+      </section>
+    </div>
+  </main>
+  <div id="transition" aria-hidden="true"><div class="hangar-door door-top"><span>CB-120 / MOVEMENT CONTROL</span></div><div class="hangar-door door-left"></div><div class="hangar-door door-right"></div></div>
+  <section id="inspection" hidden aria-labelledby="inspection-title" tabindex="-1">
+    <div class="inspection-inner">
+      <div class="station-architecture" aria-hidden="true"><img class="scene-layer scene-background" alt="" hidden><div class="station-ceiling"><span></span><span></span><span></span></div><div class="station-wall"><div class="wall-number">CB / 01</div><div class="window-frame"><div class="window-glass"><div class="window-stripe"></div></div></div><div class="wall-panel wall-panel-left"></div><div class="wall-panel wall-panel-right"></div></div><img class="scene-layer scene-window" alt="" hidden><div class="station-counter"><div class="counter-top"></div><div class="counter-face"><span>이동관리국</span><span>CONTROL / 01</span></div></div><div class="station-floor"></div><img class="scene-layer scene-counter" alt="" hidden></div>
+      <header class="inspection-header"><div class="station-brand"><span class="station-emblem" aria-hidden="true">✣</span><div><span>CB-120 / MOVEMENT AUTHORITY</span><strong>이동관리국</strong></div></div><div class="station-id"><span>통행 심사소</span><strong>CHECKPOINT 01</strong></div></header>
+      <div class="inspection-content">
+        <div class="station-sign"><div><p class="eyebrow">MOVEMENT CONTROL / 이동 심사</p><h2 id="inspection-title">통행 심사대</h2></div><div class="station-indicator"><i></i> 심사대 운영 중</div></div>
+        <div class="inspection-body">
+          <div class="checkpoint-booth">
+            <img class="terminal-layer" alt="" aria-hidden="true" hidden>
+            <div class="booth-top"><span>통행증 확인 장치</span><span>UNIT 01</span></div>
+            <div class="scanner" aria-hidden="true"><video id="camera-preview" autoplay muted playsinline hidden></video><div class="scanner-frame"><span>+</span><i></i><span>+</span><b id="scanner-symbol">NFC</b></div><small id="scanner-label">NFC SIMULATION</small><div class="camera-analysis" aria-hidden="true"><div class="analysis-corners"></div><div class="analysis-beam"></div><span>ANALYZING</span><div class="analysis-progress"><i></i></div></div></div>
+            <div class="booth-instruction"><span class="booth-light"></span><p id="inspection-intro">신청된 이동 경로를 확인합니다.</p></div>
+            <div class="booth-counter" aria-hidden="true"><span>CB-120</span><span>IDENTIFICATION TERMINAL</span></div>
+          </div>
+          <div class="paper-stage"><canvas id="paper-animation" aria-hidden="true" hidden></canvas><div class="inspection-document">
+            <div class="document-head"><div><span>이동 신청 기록</span><strong>PASSAGE RECORD</strong></div><span class="document-number">NO. 01</span></div>
+            <div class="route"><div><span>출발 구역</span><strong id="origin"></strong></div><div class="route-arrow" aria-hidden="true">→</div><div><span>도착 구역</span><strong id="destination"></strong></div><div><span>신청 계급</span><strong id="applicant"></strong></div></div>
+            <div class="decision"><p class="eyebrow">심사 상태 / STATUS</p><p id="result" role="status" aria-live="polite">검사 대기 중</p><p id="detail"></p><div class="actions"><button id="check" type="button">태그 인식 시뮬레이션</button><button id="close" type="button">신청 취소</button></div><p id="simulation-note">테스트 시뮬레이션 · 실제 기기와 연결되지 않았습니다.</p></div>
+          </div></div>
+        </div>
+      </div>
+      <footer><span>이동관리국 / 통행 심사소</span><span>공간 연출 테스트</span></footer>
+    </div>
+  </section>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
