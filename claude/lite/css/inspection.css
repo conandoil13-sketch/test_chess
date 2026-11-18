@@ -1,0 +1,472 @@
+/* ---------- 이동관리국 ---------- */
+#inspection { position: fixed; inset: 0; z-index: 30; overflow: hidden; background: #05070a; }
+.insp-inner { position: absolute; inset: 0; }
+.insp-inner.shake { animation: shake .42s; }
+@keyframes shake { 15% { transform: translate(-6px, 3px); } 30% { transform: translate(5px, -4px); } 45% { transform: translate(-4px, 2px); } 60% { transform: translate(3px, -1px); } 80% { transform: translate(-1px, 1px); } }
+
+.room { position: absolute; inset: 0; }
+.wall {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, transparent 0 62%, rgba(0,0,0,.35) 62% 62.4%, rgba(255,255,255,.03) 62.4% 63%, transparent 63%),
+    repeating-linear-gradient(90deg, transparent 0 158px, rgba(0,0,0,.28) 158px 161px, rgba(255,255,255,.03) 161px 163px),
+    linear-gradient(180deg, #0c1215 0%, #15202a 40%, #101920 66%, #0a0f13 100%);
+}
+.wall::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(0,0,0,.14) 0 1px, transparent 1px 3px); }
+
+.lamps i { position: absolute; top: 0; width: 170px; height: 8px; transform: translateX(-50%); background: #e3f4ea; box-shadow: 0 0 24px 4px rgba(190,240,215,.45); transition: background .3s, box-shadow .3s; }
+.lamps i:nth-child(1) { left: 18%; }
+.lamps i:nth-child(2) { left: 50%; }
+.lamps i:nth-child(3) { left: 82%; animation: lampFlicker 7s steps(1) infinite; }
+.lamps i::after { content: ''; position: absolute; top: 8px; left: 50%; width: 620px; height: 78vh; transform: translateX(-50%); pointer-events: none; background: radial-gradient(ellipse 50% 100% at 50% 0%, rgba(190,240,215,.12), transparent 72%); transition: background .3s; }
+@keyframes lampFlicker { 0%, 61%, 64%, 66% { opacity: 1; } 62%, 65% { opacity: .25; } }
+
+.sign { position: absolute; left: 50%; top: 4.2vh; transform: translateX(-50%); text-align: center; white-space: nowrap; }
+.sign b { display: block; font-weight: 400; font-size: clamp(30px, 3.1vw, 52px); letter-spacing: .14em; color: #ffd384; text-shadow: 0 0 4px #fff2c8, 0 0 12px #ff9c33, 0 0 30px rgba(255,140,40,.55); animation: neon 6s steps(1) infinite; }
+.sign span { display: block; margin-top: 4px; font-size: 12px; letter-spacing: .32em; color: #74ecff; text-shadow: 0 0 10px rgba(79,227,255,.8); }
+@keyframes neon { 0%, 40%, 43%, 100% { opacity: 1; } 41%, 44% { opacity: .55; } }
+
+.beacon { position: absolute; left: 7vw; top: 6vh; width: 34px; height: 34px; border-radius: 50%; background: #3a1016; border: 4px solid #1a1f24; box-shadow: inset 0 -6px 0 rgba(0,0,0,.4); }
+.beacon::after { content: 'ALERT'; position: absolute; top: 44px; left: 50%; transform: translateX(-50%); font-size: 10px; letter-spacing: .2em; color: #59646d; }
+.queue { position: absolute; right: 7vw; top: 5vh; padding: 10px 14px; background: #06090b; border: 3px solid #1d262c; text-align: center; box-shadow: inset 0 0 20px rgba(0,0,0,.8); }
+.queue span { display: block; font-size: 10px; letter-spacing: .2em; color: #59646d; }
+.queue b { display: block; font-weight: 400; font-size: 34px; color: #ff6a4a; text-shadow: 0 0 10px rgba(255,90,60,.8); letter-spacing: .1em; }
+
+.booth {
+  position: absolute; left: 50%; top: 15vh; width: min(40vw, 680px); height: 36vh; transform: translateX(-50%); overflow: hidden;
+  background: linear-gradient(180deg, #0f1c22, #091215 75%);
+  border: 16px solid #1a2328; outline: 3px solid #090d0f;
+  box-shadow: inset 0 0 0 3px #26323a, 0 30px 80px rgba(0,0,0,.65);
+}
+.booth-light { position: absolute; inset: 0; background: radial-gradient(ellipse 40% 60% at 50% 70%, rgba(80,170,160,.28), transparent 70%); }
+#officer { position: absolute; left: 50%; bottom: -14%; height: 122%; transform: translateX(-50%); image-rendering: pixelated; filter: brightness(.42) saturate(.55) contrast(1.15); animation: breatheOfficer 4s ease-in-out infinite; }
+@keyframes breatheOfficer { 50% { transform: translateX(-50%) translateY(-1.2%); } }
+.glass { position: absolute; inset: 0; background: linear-gradient(115deg, transparent 16%, rgba(255,255,255,.09) 18%, transparent 25%, transparent 58%, rgba(255,255,255,.05) 60%, transparent 64%), linear-gradient(rgba(70,140,150,.1), rgba(15,35,40,.3)); }
+.grille { position: absolute; left: 50%; bottom: 10px; width: 130px; height: 28px; transform: translateX(-50%); background: repeating-linear-gradient(90deg, #0b1012 0 4px, #2a353a 4px 7px); border: 3px solid #2a353a; }
+.booth-tag { position: absolute; left: 10px; top: 8px; font-size: 10px; letter-spacing: .14em; color: #4c6a6a; }
+
+.officer-line { position: absolute; left: 50%; top: calc(15vh + 36vh + 18px); transform: translateX(-50%); z-index: 3; margin: 0; padding: 9px 18px; min-width: 340px; text-align: center; background: rgba(4,7,9,.9); border: 2px solid #26393f; box-shadow: 0 0 0 2px #020304; font-size: 18px; white-space: nowrap; }
+.officer-line span { font-size: 12px; color: #6fe9ff; margin-right: 12px; letter-spacing: .14em; }
+.officer-line b { font-weight: 400; color: #e8f3ef; }
+
+.counter { position: absolute; left: 0; right: 0; bottom: 0; height: 31vh; }
+.counter-top { height: 6vh; background: linear-gradient(180deg, #6b5a49, #463a30 70%, #3a3029); box-shadow: 0 -3px 0 #8a7560, 0 6px 14px rgba(0,0,0,.6); }
+.counter-front { height: 25vh; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 2vh; background: repeating-linear-gradient(90deg, rgba(0,0,0,.2) 0 3px, transparent 3px 140px), linear-gradient(180deg, #2b231d, #120e0b); }
+.counter-front span { font-size: 13px; letter-spacing: .32em; color: #6f604f; }
+
+.alarm { position: absolute; inset: 0; opacity: 0; pointer-events: none; background: radial-gradient(ellipse 80% 70% at 50% 0%, rgba(255,30,50,.38), transparent 70%); }
+.denied .alarm { animation: alarm .55s steps(2) infinite; }
+.denied .beacon { background: #ff2a40; box-shadow: 0 0 30px 10px rgba(255,40,64,.6), inset 0 -6px 0 rgba(0,0,0,.2); animation: blink .55s steps(2) infinite; }
+.denied .lamps i { background: #ff7b84; box-shadow: 0 0 24px 4px rgba(255,80,90,.55); }
+.denied .lamps i::after { background: radial-gradient(ellipse 50% 100% at 50% 0%, rgba(255,70,80,.14), transparent 72%); }
+.approved .lamps i::after { background: radial-gradient(ellipse 50% 100% at 50% 0%, rgba(124,242,160,.15), transparent 72%); }
+.approved .booth-light { background: radial-gradient(ellipse 40% 60% at 50% 70%, rgba(124,242,160,.35), transparent 70%); }
+@keyframes alarm { 0% { opacity: .95; } 50% { opacity: .25; } }
+
+/* 확인 장치 */
+.device {
+  position: absolute; left: max(3vw, calc(50% - 700px)); bottom: 5vh; z-index: 4; width: clamp(300px, 25vw, 420px); padding: 14px;
+  background: linear-gradient(180deg, #2c363b, #1a2124); border: 3px solid #0a0e10;
+  box-shadow: inset 0 2px 0 #44525a, inset 0 -4px 0 #11171a, 0 26px 44px rgba(0,0,0,.65);
+}
+.device::before, .device::after { content: ''; position: absolute; top: 6px; width: 6px; height: 6px; background: #4b585e; box-shadow: 0 0 0 1px #0a0e10; }
+.device::before { left: 6px; }
+.device::after { right: 6px; }
+.device-head { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #9fb3b5; margin-bottom: 10px; padding: 0 6px; }
+.led { width: 10px; height: 10px; background: #3cff8a; box-shadow: 0 0 8px #3cff8a; animation: blink 1.4s steps(2) infinite; }
+.scanning .led { background: #ffc53c; box-shadow: 0 0 8px #ffc53c; animation-duration: .25s; }
+
+.screen { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: radial-gradient(ellipse at center, #0c2c2e, #031110 80%); border: 6px solid #0a0e10; box-shadow: inset 0 0 0 2px #1f2a2e; }
+.screen::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,0,0,.25) 0 1px, transparent 1px 3px), radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.65) 100%); }
+#cam-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); filter: grayscale(.4) contrast(1.15) sepia(.25) hue-rotate(120deg) brightness(.9); }
+
+.nfc-idle { position: absolute; inset: 0; display: grid; place-items: center; }
+.nfc-idle i { position: absolute; left: 50%; top: 46%; width: 70px; height: 70px; margin: -35px; border: 3px solid rgba(79,227,255,.7); border-radius: 50%; animation: ripple 2.1s ease-out infinite; }
+.nfc-idle i:nth-child(2) { animation-delay: .7s; }
+.nfc-idle i:nth-child(3) { animation-delay: 1.4s; }
+.nfc-idle b { position: relative; top: -4%; font-weight: 400; font-size: 26px; color: #74ecff; text-shadow: 0 0 10px rgba(79,227,255,.9); }
+@keyframes ripple { from { transform: scale(.5); opacity: 1; } to { transform: scale(2.4); opacity: 0; } }
+
+.reticle { position: absolute; inset: 16% 20% 24%; }
+.reticle i { position: absolute; width: 22px; height: 22px; border: 3px solid var(--cyan); filter: drop-shadow(0 0 4px var(--cyan)); }
+.reticle i:nth-child(1) { left: 0; top: 0; border-right: 0; border-bottom: 0; }
+.reticle i:nth-child(2) { right: 0; top: 0; border-left: 0; border-bottom: 0; }
+.reticle i:nth-child(3) { left: 0; bottom: 0; border-right: 0; border-top: 0; }
+.reticle i:nth-child(4) { right: 0; bottom: 0; border-left: 0; border-top: 0; }
+#inspection[data-mode='nfc'] .reticle, #inspection[data-mode='nfc'] #cam-btn { display: none; }
+#inspection[data-mode='camera'] .nfc-idle { display: none; }
+.cam-live #cam-btn { display: none; }
+#cam-btn { position: absolute; left: 50%; top: 44%; transform: translate(-50%, -50%); padding: 8px 14px; background: rgba(4,20,22,.85); border: 2px solid var(--cyan); color: #bff6ff; font-size: 14px; }
+#cam-btn:hover { background: rgba(10,50,56,.9); }
+
+.beam { position: absolute; left: 0; right: 0; top: 0; height: 3px; opacity: 0; background: #8ff6ff; box-shadow: 0 0 14px 4px rgba(79,227,255,.75); }
+.scanning .beam { opacity: 1; animation: beam .9s ease-in-out infinite alternate; }
+@keyframes beam { from { top: 4%; } to { top: 92%; } }
+.scanning .nfc-idle i { animation-duration: .7s; border-color: #ffd25e; }
+.scanning .reticle { animation: lock .5s steps(2) infinite; }
+@keyframes lock { 50% { inset: 20% 24% 28%; } }
+
+.scan-log { position: absolute; left: 10px; top: 8px; right: 10px; margin: 0; font: 13px/1.55 var(--font); color: #8affd2; text-shadow: 0 0 6px rgba(80,255,190,.7); white-space: pre-wrap; z-index: 2; }
+.screen-state { position: absolute; left: 0; right: 0; bottom: 14px; margin: 0; padding: 0 10px; text-align: center; font-size: 13px; color: #9cf3ff; z-index: 2; text-shadow: 0 0 6px rgba(79,227,255,.6); }
+.screen-verdict { position: absolute; inset: 0; display: grid; place-items: center; z-index: 3; font-size: 64px; opacity: 0; }
+.approved .screen-verdict { opacity: 1; color: var(--ok); background: rgba(10,40,24,.6); text-shadow: 0 0 20px rgba(124,242,160,.9); animation: verdictIn .3s steps(3); }
+.denied .screen-verdict { opacity: 1; color: var(--bad); background: rgba(50,8,14,.6); text-shadow: 0 0 20px rgba(255,84,104,.9); animation: verdictIn .3s steps(3), blink .5s steps(2) .3s 4; }
+.done .scan-log, .done .nfc-idle, .done .reticle { opacity: .25; }
+@keyframes verdictIn { from { transform: scale(1.6); opacity: 0; } }
+.progress { position: absolute; left: 10px; right: 10px; bottom: 4px; height: 4px; background: rgba(79,227,255,.15); z-index: 2; }
+.progress i { display: block; height: 100%; width: 0; background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+.scanning .progress i { animation: progress 2.5s steps(20) forwards; }
+.done .progress i { width: 100%; }
+@keyframes progress { to { width: 100%; } }
+
+.device-actions { display: grid; grid-template-columns: 1.3fr 1fr; gap: 10px; margin-top: 14px; }
+.device-note { margin: 10px 0 0; text-align: center; font-size: 11px; color: #64737a; }
+
+/* 신청서 (코드로 그린 종이) */
+.paper-stage { position: absolute; right: max(3vw, calc(50% - 700px)); bottom: 3vh; z-index: 4; width: clamp(320px, 27vw, 450px); perspective: 1200px; }
+.paper {
+  position: relative; opacity: 0; color: #2b241a; padding: 18px 22px 18px;
+  background: repeating-linear-gradient(0deg, transparent 0 27px, rgba(80,60,40,.07) 27px 28px), linear-gradient(160deg, #f1e9d4, #e3d8bc);
+  box-shadow: 0 2px 0 #c7ba9b, 0 26px 44px rgba(0,0,0,.6);
+  transform: rotate(2.5deg);
+}
+.paper::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 6px; background: repeating-linear-gradient(90deg, #b3242f 0 18px, #e3d8bc 18px 24px); opacity: .8; }
+.paper.fly { animation: fly 1.05s cubic-bezier(.2,.75,.25,1) forwards; }
+@keyframes fly {
+  0% { opacity: 1; transform: translate(60vw, -80vh) rotate(38deg) rotateX(55deg) scale(.8); }
+  55% { opacity: 1; transform: translate(-2vw, 1.5vh) rotate(-5deg) rotateX(14deg) scale(1.03); }
+  78% { opacity: 1; transform: translate(.4vw, -.5vh) rotate(4deg) rotateX(-4deg); }
+  100% { opacity: 1; transform: rotate(2.5deg); }
+}
+.paper header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #2b241a; padding-bottom: 10px; margin-bottom: 8px; }
+.paper header span { display: block; font-size: 12px; color: #6d5f4b; }
+.paper header b { display: block; font-size: 24px; font-weight: 400; letter-spacing: .04em; }
+.paper header em { font-style: normal; font-size: 13px; padding: 3px 6px; border: 2px solid #2b241a; }
+.paper dl { margin: 0; }
+.paper dl div { display: grid; grid-template-columns: 82px 1fr; padding: 4px 0; border-bottom: 1px dashed rgba(43,36,26,.3); }
+.paper dt { font-size: 12px; color: #6d5f4b; padding-top: 3px; }
+.paper dd { margin: 0; font-size: 16px; }
+.paper-map { display: flex; gap: 14px; align-items: flex-end; margin-top: 10px; }
+#p-map { width: 100px; height: 100px; image-rendering: pixelated; border: 2px solid #2b241a; }
+.paper-map p { margin: 0; font-size: 12px; color: #6d5f4b; line-height: 1.6; }
+.paper-map small { display: block; }
+.paper footer { display: flex; align-items: flex-end; gap: 10px; margin-top: 10px; font-size: 12px; color: #6d5f4b; }
+.paper footer i { flex: 0 0 120px; height: 1px; background: #2b241a; }
+
+.stamp { position: absolute; right: 26px; bottom: 34px; padding: 8px 14px 6px; border: 5px double currentColor; font-size: 30px; line-height: 1; text-align: center; opacity: 0; transform: rotate(-14deg); mix-blend-mode: multiply; pointer-events: none; }
+.stamp small { display: block; margin-top: 4px; font-size: 12px; letter-spacing: .24em; }
+.stamp.ok { color: #1f7a45; }
+.stamp.no { color: #c4222f; }
+.stamp.hit { animation: stamp .3s cubic-bezier(.3,1.6,.5,1) forwards; }
+.stamp::after { content: ''; position: absolute; inset: -6px; background: radial-gradient(circle at 20% 30%, #ece3cc 0 2px, transparent 3px) 0 0 / 17px 13px, radial-gradient(circle at 70% 60%, #ece3cc 0 1.5px, transparent 2.5px) 0 0 / 11px 19px; opacity: .75; }
+@keyframes stamp { from { opacity: 0; transform: rotate(-14deg) scale(2.6); } to { opacity: .92; transform: rotate(-14deg) scale(1); } }
+
+/* 결과 배너 */
+.banner { position: absolute; left: 0; right: 0; top: 41%; z-index: 6; height: 104px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; opacity: 0; pointer-events: none; }
+.banner b { font-weight: 400; font-size: 50px; letter-spacing: .1em; }
+.banner span { font-size: 15px; }
+.banner.ok { background: linear-gradient(90deg, transparent, rgba(5,26,14,.94) 18%, rgba(5,26,14,.94) 82%, transparent); border-block: 3px solid var(--ok); color: var(--ok); text-shadow: 0 0 18px rgba(124,242,160,.7); }
+.banner.no { background: linear-gradient(90deg, transparent, rgba(34,4,9,.94) 18%, rgba(34,4,9,.94) 82%, transparent); border-block: 3px solid var(--bad); color: #ff8492; text-shadow: 0 0 18px rgba(255,84,104,.7); }
+.banner span { color: #e8eeec; text-shadow: none; }
+.banner.show { animation: banner 2.5s .35s both; }
+@keyframes banner { 0% { opacity: 0; transform: scaleY(0); } 8% { opacity: 1; transform: scaleY(1); } 88% { opacity: 1; } 100% { opacity: 0; } }
+
+@media (max-width: 1200px) {
+  .booth, .booth-frame { width: 46vw; height: 30vh; }
+  .officer-line { top: calc(15vh + 30vh + 18px); font-size: 15px; }
+  .device { width: 290px; }
+  .paper-stage { width: 320px; }
+}
+
+/* ---------- 고딕 스킨 ----------
+   석조 홀: 첨두창 너머로 우주가 보이고, 심사 창구는 뾰족 아치. 네온은 가는 선 위주로 절제. */
+.wall {
+  background:
+    linear-gradient(180deg, transparent 0 62%, rgba(0,0,0,.4) 62% 62.4%, rgba(139,137,152,.08) 62.4% 63%, transparent 63%),
+    repeating-linear-gradient(90deg, transparent 0 150px, rgba(0,0,0,.35) 150px 152px, rgba(139,137,152,.07) 152px 154px, transparent 154px 196px, rgba(0,0,0,.35) 196px 198px, rgba(139,137,152,.07) 198px 200px),
+    repeating-linear-gradient(0deg, transparent 0 34px, rgba(0,0,0,.22) 34px 36px),
+    linear-gradient(180deg, #0d0c14 0%, #1b1926 40%, #15131e 66%, #0a0910 100%);
+}
+/* 첨두창 4개 (양옆) */
+.arches { position: absolute; inset: 0; pointer-events: none; }
+.arches i {
+  position: absolute; top: 14vh; width: 5.2vw; height: 40vh; min-width: 54px;
+  clip-path: polygon(0 100%, 0 26%, 8% 14%, 22% 5%, 50% 0, 78% 5%, 92% 14%, 100% 26%, 100% 100%);
+  background:
+    linear-gradient(90deg, transparent 47%, #2a2836 47% 53%, transparent 53%),
+    linear-gradient(180deg, transparent 0 55%, #2a2836 55% 56.5%, transparent 56.5%),
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,.7) 0 1px, transparent 1.5px) 0 0 / 23px 31px,
+    radial-gradient(circle at 70% 60%, rgba(200,220,255,.5) 0 1px, transparent 1.5px) 0 0 / 37px 29px,
+    linear-gradient(180deg, #120f2a, #0b1a2a 60%, #0d2a30);
+  box-shadow: inset 0 0 0 4px #3d3b4a, inset 0 0 0 6px #0b0a10;
+}
+.arches i::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 60%, rgba(127,233,255,.12)); }
+.arches i:nth-child(1) { left: 5vw; }
+.arches i:nth-child(2) { left: 14vw; }
+.arches i:nth-child(3) { right: 14vw; }
+.arches i:nth-child(4) { right: 5vw; }
+
+.lamps i { width: 120px; height: 5px; background: #cfeef6; box-shadow: 0 0 14px 2px rgba(150,220,240,.3); }
+.lamps i::after { background: radial-gradient(ellipse 50% 100% at 50% 0%, rgba(150,210,235,.08), transparent 72%); }
+
+/* 간판: 돌 현판 + 가는 네온 */
+.sign { padding: 10px 34px 12px; background: linear-gradient(180deg, #2a2836, #18161f); border: 2px solid #3d3b4a; box-shadow: 0 0 0 2px #05040a, inset 0 1px 0 rgba(127,233,255,.35), 0 12px 30px rgba(0,0,0,.6); }
+.sign::before { content: ''; position: absolute; left: 50%; top: -13px; width: 44px; height: 12px; transform: translateX(-50%); background: #3d3b4a; clip-path: polygon(0 100%, 50% 0, 100% 100%); }
+.sign b { color: #f1dca6; text-shadow: 0 2px 0 #05040a, 0 0 10px rgba(255,200,120,.25); }
+.sign span { color: #9ad6e4; text-shadow: 0 0 6px rgba(127,233,255,.35); border-top: 1px solid rgba(127,233,255,.35); padding-top: 5px; margin-top: 6px; }
+
+.beacon { border-color: #3d3b4a; box-shadow: 0 0 0 2px #05040a, inset 0 -6px 0 rgba(0,0,0,.4); }
+.queue { background: #0b0a10; border: 2px solid #3d3b4a; box-shadow: 0 0 0 2px #05040a, inset 0 1px 0 rgba(127,233,255,.25), inset 0 0 20px rgba(0,0,0,.8); }
+.queue b { color: #ff7a63; text-shadow: 0 0 6px rgba(255,90,60,.55); }
+
+/* 심사 창구: 뾰족 아치 */
+.booth, .booth-frame {
+  clip-path: polygon(0 100%, 0 36%, 5% 22%, 14% 11%, 28% 4%, 50% 0, 72% 4%, 86% 11%, 95% 22%, 100% 36%, 100% 100%);
+}
+.booth { border: 0; outline: 0; box-shadow: none; background: linear-gradient(180deg, #121a24, #0a1016 75%); }
+.booth-frame {
+  position: absolute; left: 50%; top: calc(15vh - 18px); width: calc(min(40vw, 680px) + 36px); height: calc(36vh + 18px); transform: translateX(-50%);
+  background:
+    linear-gradient(180deg, rgba(127,233,255,.4), rgba(127,233,255,.4)) top 0 left 0 / 100% 2px no-repeat,
+    repeating-linear-gradient(0deg, #2c2a38 0 18px, #23212d 18px 20px);
+  filter: drop-shadow(0 30px 60px rgba(0,0,0,.6));
+}
+.booth-frame::after { content: ''; position: absolute; inset: 14px 14px 0; background: #07060b;
+  clip-path: polygon(0 100%, 0 36%, 5% 22%, 14% 11%, 28% 4%, 50% 0, 72% 4%, 86% 11%, 95% 22%, 100% 36%, 100% 100%); }
+.booth-light { background: radial-gradient(ellipse 40% 60% at 50% 70%, rgba(110,170,200,.22), transparent 70%); }
+.grille { background: repeating-linear-gradient(90deg, #0b0a10 0 4px, #3d3b4a 4px 7px); border-color: #3d3b4a; }
+.booth-tag { left: 50%; top: 14%; transform: translateX(-50%); color: #5c5a6b; }
+
+.officer-line { background: linear-gradient(180deg, rgba(28,26,38,.95), rgba(12,11,18,.95)); border: 2px solid #3d3b4a; box-shadow: 0 0 0 2px #05040a, inset 0 1px 0 rgba(127,233,255,.3); }
+.officer-line span { color: #9ad6e4; }
+
+/* 심사대: 석조 + 블라인드 아케이드 */
+.counter-top { background: linear-gradient(180deg, #5c5a6b, #3d3b4a 70%, #2a2836); box-shadow: 0 -2px 0 #8b8998, 0 -3px 0 rgba(127,233,255,.25), 0 6px 14px rgba(0,0,0,.6); }
+.counter-front {
+  background:
+    radial-gradient(ellipse 46px 60px at 50% 100%, transparent 96%, rgba(139,137,152,.12) 97% 100%) 0 30% / 120px 14vh repeat-x,
+    repeating-linear-gradient(90deg, rgba(0,0,0,.3) 0 3px, rgba(139,137,152,.06) 3px 5px, transparent 5px 120px),
+    linear-gradient(180deg, #1f1d29, #0c0b12);
+}
+.counter-front span { color: #6c6a79; }
+
+/* 확인 장치: 돌판 패널 */
+.device {
+  background:
+    linear-gradient(#5c5a6b, #5c5a6b) top 5px left 5px / 9px 1px no-repeat,
+    linear-gradient(#5c5a6b, #5c5a6b) top 5px left 5px / 1px 9px no-repeat,
+    linear-gradient(#5c5a6b, #5c5a6b) top 5px right 5px / 9px 1px no-repeat,
+    linear-gradient(#5c5a6b, #5c5a6b) top 5px right 5px / 1px 9px no-repeat,
+    linear-gradient(180deg, #2a2836, #15141c);
+  border: 2px solid #3d3b4a;
+  box-shadow: 0 0 0 2px #05040a, inset 0 1px 0 rgba(127,233,255,.3), 0 26px 44px rgba(0,0,0,.65);
+}
+.device::before, .device::after { display: none; }
+.device-head { color: #8b8998; }
+.screen { border-color: #0b0a10; box-shadow: inset 0 0 0 2px #3d3b4a; }
+.device-note { color: #5c5a6b; }
+
+/* 신청서 위쪽 띠를 고딕 장식띠로 */
+.paper::before { background: repeating-linear-gradient(90deg, #5a2a3a 0 10px, #e3d8bc 10px 12px, #2c3550 12px 22px, #e3d8bc 22px 24px); opacity: .75; }
+
+/* 결과 배너: 글로우 절제 */
+.banner.ok, .banner.no { text-shadow: 0 0 10px currentColor; }
+.banner.ok b, .banner.no b { text-shadow: 0 2px 0 #000, 0 0 10px currentColor; }
+.banner.ok { border-block: 2px solid var(--ok); }
+.banner.no { border-block: 2px solid var(--bad); }
+
+/* 간판과 아치가 겹치지 않게 창구를 조금 내린다 */
+.booth { top: 19vh; height: 33vh; }
+.booth-frame { top: calc(19vh - 18px); height: calc(33vh + 18px); background: linear-gradient(180deg, rgba(127,233,255,.4), rgba(127,233,255,.4)) top 0 left 0 / 100% 2px no-repeat, repeating-linear-gradient(0deg, #3d3b4a 0 18px, #302e3c 18px 20px); }
+.officer-line { top: calc(19vh + 33vh + 16px); }
+@media (max-width: 1200px) {
+  .booth { height: 29vh; }
+  .booth-frame { width: calc(46vw + 36px); height: calc(29vh + 18px); }
+  .officer-line { top: calc(19vh + 29vh + 16px); }
+}
+
+/* ---------- 신호 스테인드글라스 ----------
+   평소엔 바깥 하늘처럼 보이다가, 승인이면 초록, 거절이면 빨강 스테인드글라스로 켜진다. */
+#inspection { --sg-a: #3cff8a; --sg-b: #1d8a4c; --sg-c: #c8ffd8; --sg-d: #e8d27a; }
+#inspection.denied { --sg-a: #ff3b4a; --sg-b: #8e1222; --sg-c: #ffb4a8; --sg-d: #ff9a3a; }
+.arches i::before {
+  content: ''; position: absolute; inset: 6px; opacity: 0; transition: opacity .45s steps(4);
+  background:
+    radial-gradient(circle at 50% 22%, transparent 0 9%, rgba(10,8,14,.95) 9% 10.5%, var(--sg-c) 10.5% 13%, rgba(10,8,14,.95) 13% 14.5%, transparent 14.5%),
+    repeating-linear-gradient(45deg, rgba(10,8,14,.95) 0 2px, transparent 2px 17px),
+    repeating-linear-gradient(-45deg, rgba(10,8,14,.95) 0 2px, transparent 2px 17px),
+    radial-gradient(circle at 20% 30%, var(--sg-c) 0 12%, transparent 13%) 0 0 / 34px 34px,
+    radial-gradient(circle at 70% 70%, var(--sg-d) 0 9%, transparent 10%) 0 0 / 51px 46px,
+    linear-gradient(180deg, var(--sg-a), var(--sg-b) 60%, var(--sg-a));
+  clip-path: polygon(0 100%, 0 26%, 8% 14%, 22% 5%, 50% 0, 78% 5%, 92% 14%, 100% 26%, 100% 100%);
+}
+.approved .arches i::before { opacity: .92; }
+.denied .arches i::before { animation: glassAlarm .55s steps(2) infinite; }
+@keyframes glassAlarm { 0% { opacity: .95; } 50% { opacity: .35; } }
+/* 창에서 흘러나오는 색 빛 */
+.glass-spill { position: absolute; inset: 0; pointer-events: none; opacity: 0; mix-blend-mode: screen; transition: opacity .45s;
+  background:
+    radial-gradient(ellipse 10vw 46vh at 7.6vw 40vh, color-mix(in srgb, var(--sg-a) 40%, transparent), transparent 70%),
+    radial-gradient(ellipse 10vw 46vh at 16.6vw 40vh, color-mix(in srgb, var(--sg-a) 40%, transparent), transparent 70%),
+    radial-gradient(ellipse 10vw 46vh at calc(100% - 16.6vw) 40vh, color-mix(in srgb, var(--sg-a) 40%, transparent), transparent 70%),
+    radial-gradient(ellipse 10vw 46vh at calc(100% - 7.6vw) 40vh, color-mix(in srgb, var(--sg-a) 40%, transparent), transparent 70%),
+    linear-gradient(180deg, transparent 60%, color-mix(in srgb, var(--sg-a) 10%, transparent)); }
+.approved .glass-spill { opacity: .45; }
+.denied .glass-spill { animation: spillAlarm .55s steps(2) infinite; }
+@keyframes spillAlarm { 0% { opacity: .5; } 50% { opacity: .1; } }
+/* 기존 붉은 전면 경보는 약하게 */
+.alarm { background: radial-gradient(ellipse 80% 70% at 50% 0%, rgba(255,30,50,.2), transparent 70%); }
+
+/* ---------- 신호 랜턴 (거절 빨강 / 허가 초록) ----------
+   천장 곳곳에 길이·크기가 다르게 매달린 철제 랜턴. 거절이면 빨강들이, 승인이면 초록들이 켜진다. */
+.beacon { display: none; }
+.lanterns { position: absolute; inset: 0; pointer-events: none; }
+.lantern {
+  position: absolute; left: var(--x); top: 0; width: 46px; margin-left: -23px; padding-top: var(--chain);
+  transform-origin: 50% 0; transform: scale(var(--s)); animation: sway 5.5s ease-in-out infinite; animation-delay: var(--d);
+}
+@keyframes sway { 0%, 100% { rotate: -1.6deg; } 50% { rotate: 1.6deg; } }
+/* 사슬 */
+.lantern::before {
+  content: ''; position: absolute; left: 50%; top: 0; width: 4px; height: calc(var(--chain) + 4px); margin-left: -2px;
+  background: radial-gradient(ellipse 2px 3px at 50% 50%, transparent 60%, #6c6a79 65%) 0 0 / 4px 7px repeat-y;
+}
+/* 지붕: 고리 + 피니얼 + 뾰족 캡 + 처마 */
+.lantern .cap { position: relative; display: block; width: 46px; height: 26px; }
+.lantern .cap::before {
+  content: ''; position: absolute; left: 50%; top: 0; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%;
+  border: 2px solid #8b8998; box-sizing: border-box;
+}
+.lantern .cap::after {
+  content: ''; position: absolute; left: 3px; right: 3px; top: 7px; bottom: 0;
+  background:
+    linear-gradient(180deg, transparent 0 78%, #8b8998 78% 86%, #2a2836 86%),
+    linear-gradient(90deg, #6c6a79, #4d4b5a 50%, #2f2d3b);
+  clip-path: polygon(50% 0, 58% 30%, 100% 78%, 100% 100%, 0 100%, 0 78%, 42% 30%);
+}
+/* 유리 몸체: 철 기둥 4개, 가로대, 첨두 유리창, 안쪽 불꽃 */
+.lantern i {
+  position: relative; display: block; width: 38px; height: 54px; margin: 0 auto;
+  background:
+    linear-gradient(90deg, #3d3b4a 0 4px, transparent 4px calc(33% - 1px), #2a2836 calc(33% - 1px) calc(33% + 2px), transparent calc(33% + 2px) calc(67% - 2px), #2a2836 calc(67% - 2px) calc(67% + 1px), transparent calc(67% + 1px) calc(100% - 4px), #24222d calc(100% - 4px)),
+    linear-gradient(180deg, transparent 0 46%, #2a2836 46% 51%, transparent 51%),
+    radial-gradient(ellipse 30% 28% at 50% 64%, var(--core, transparent), transparent 70%),
+    linear-gradient(180deg, var(--glass) 0%, color-mix(in srgb, var(--glass) 70%, #000) 100%);
+  clip-path: polygon(0 12%, 18% 3%, 50% 0, 82% 3%, 100% 12%, 100% 100%, 0 100%);
+  box-shadow: inset 0 0 0 1px #14131b;
+}
+/* 받침과 아래 펜던트 */
+.lantern .foot { position: relative; display: block; width: 46px; height: 18px; }
+.lantern .foot::before { content: ''; position: absolute; left: 1px; right: 1px; top: 0; height: 6px; background: linear-gradient(180deg, #8b8998, #4d4b5a 60%, #2a2836); clip-path: polygon(0 0, 100% 0, 88% 100%, 12% 100%); }
+.lantern .foot::after { content: ''; position: absolute; left: 50%; top: 6px; width: 10px; height: 12px; margin-left: -5px; background: linear-gradient(90deg, #6c6a79, #2f2d3b); clip-path: polygon(0 0, 100% 0, 50% 100%); }
+/* 꺼진 상태 / 켜진 상태 */
+.lantern.red { --glass: #3b1a22; --on: #ff4a58; --hot: #ffd0c4; }
+.lantern.green { --glass: #15301f; --on: #4dff95; --hot: #e2ffe9; }
+.lantern i::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(115deg, transparent 20%, rgba(255,255,255,.12) 24%, transparent 30%); }
+.lantern .glow { display: none; }
+.lantern > i + .foot + * { display: none; }
+.denied .lantern.red i, .approved .lantern.green i { --glass: var(--on); --core: var(--hot); }
+.denied .lantern.red, .approved .lantern.green { filter: drop-shadow(0 0 10px color-mix(in srgb, var(--on) 70%, transparent)); }
+.denied .lantern.red i { animation: blink .55s steps(2) infinite; }
+.scanning .lantern i { animation: lanternIdle .35s steps(2) infinite; }
+@keyframes lanternIdle { 50% { filter: brightness(1.7); } }
+
+/* ---------- 확인 장치: 고딕 성물함 같은 단말 ---------- */
+.device { padding-top: 18px; }
+.device::before {
+  display: block; content: ''; position: absolute; left: 50%; top: -26px; width: 46%; height: 26px; transform: translateX(-50%);
+  background: linear-gradient(180deg, #3d3b4a, #2a2836); clip-path: polygon(0 100%, 12% 55%, 30% 22%, 50% 0, 70% 22%, 88% 55%, 100% 100%);
+}
+.device::after {
+  display: block; content: ''; position: absolute; left: 50%; top: -17px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%;
+  background: radial-gradient(circle, #9ad6e4 0 25%, #2a2836 30% 45%, #5c5a6b 50% 60%, transparent 62%);
+}
+.scanning .device::after { background: radial-gradient(circle, #ffd25e 0 30%, #2a2836 35% 45%, #5c5a6b 50% 60%, transparent 62%); }
+.approved .device::after { background: radial-gradient(circle, #4dff95 0 30%, #2a2836 35% 45%, #5c5a6b 50% 60%, transparent 62%); }
+.denied .device::after { background: radial-gradient(circle, #ff4a58 0 30%, #2a2836 35% 45%, #5c5a6b 50% 60%, transparent 62%); }
+.device-head { border-bottom: 1px solid #3d3b4a; padding-bottom: 8px; letter-spacing: .08em; }
+.device-head span:first-child::before { content: '◆ '; color: #c79bff; opacity: .7; font-size: 9px; }
+.screen {
+  border-radius: 50% 50% 0 0 / 16% 16% 0 0; border: 6px solid #0b0a10;
+  box-shadow: 0 0 0 2px #5c5a6b, 0 0 0 4px #1a1922, inset 0 0 0 2px #3d3b4a;
+  background: radial-gradient(ellipse at center, #10283a, #050d14 80%);
+}
+.scan-log { top: 18%; color: #9ae8ff; text-shadow: 0 0 5px rgba(127,233,255,.5); }
+.screen-state { color: #b6ecf7; text-shadow: none; }
+.led { box-shadow: 0 0 4px currentColor; }
+
+/* ---------- 신청서: 고딕 양피지 문서 ---------- */
+.paper {
+  color: #2a1d14; padding: 22px 26px 20px;
+  background:
+    radial-gradient(ellipse at 50% 40%, transparent 55%, rgba(110,70,30,.18) 100%),
+    repeating-linear-gradient(0deg, transparent 0 27px, rgba(90,60,30,.06) 27px 28px),
+    linear-gradient(160deg, #efe3c4, #dccbA3);
+  box-shadow: inset 0 0 0 7px #e8dbb9, inset 0 0 0 8px #5a2a3a, inset 0 0 0 10px #e8dbb9, inset 0 0 0 11px #2c3550, 0 2px 0 #b9a77f, 0 26px 44px rgba(0,0,0,.6);
+}
+/* 위쪽 장식: 작은 아치가 이어진 트레이서리 띠 */
+.paper::before {
+  left: 14px; right: 14px; top: 14px; height: 8px; opacity: .85;
+  background:
+    radial-gradient(ellipse 5px 7px at 50% 100%, transparent 70%, #5a2a3a 72% 100%) 0 0 / 12px 8px repeat-x;
+}
+.paper header { border-bottom: 2px solid #2a1d14; box-shadow: 0 3px 0 #e8dbb9, 0 4px 0 rgba(42,29,20,.6); margin-top: 6px; }
+.paper header span { color: #5a2a3a; letter-spacing: .12em; }
+.paper header b { color: #2c2030; letter-spacing: .02em; font-size: 22px; white-space: nowrap; }
+.paper header em { border: 2px solid #5a2a3a; color: #5a2a3a; clip-path: polygon(4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px), 0 4px); }
+.paper dt { color: #6a4a35; }
+.paper dt::before { content: '✠ '; color: #5a2a3a; opacity: .6; font-size: 10px; }
+#p-map { border: 2px solid #2a1d14; border-radius: 50% 50% 0 0 / 22% 22% 0 0; }
+.paper footer i { background: #5a2a3a; }
+
+/* 도장 → 밀랍 봉인 */
+.stamp {
+  right: 22px; bottom: 26px; width: 104px; height: 104px; padding: 0; border: 0; border-radius: 50%;
+  display: grid; place-content: center; text-align: center; font-size: 18px; line-height: 1.1; color: rgba(255,244,228,.92);
+  mix-blend-mode: normal; text-shadow: 0 1px 0 rgba(0,0,0,.35);
+  background: radial-gradient(circle at 38% 32%, var(--wax-hi), var(--wax) 55%, var(--wax-dk) 78%);
+  box-shadow: 0 0 0 3px var(--wax-dk), 4px 2px 0 1px var(--wax), -3px 4px 0 0 var(--wax-dk), 0 6px 10px rgba(0,0,0,.4);
+}
+.stamp::after { inset: 10px; border-radius: 50%; background: none; border: 2px dashed rgba(255,240,220,.3); opacity: 1; }
+.stamp small { font-size: 9px; letter-spacing: .18em; margin-top: 3px; }
+.stamp.ok { --wax: #2f7a4a; --wax-hi: #5cb97a; --wax-dk: #174a2b; color: rgba(236,255,240,.92); }
+.stamp.no { --wax: #9e1f2c; --wax-hi: #d8495a; --wax-dk: #5e0f18; color: rgba(255,236,236,.92); }
+@keyframes stamp { from { opacity: 0; transform: rotate(-14deg) scale(2.2); } to { opacity: 1; transform: rotate(-14deg) scale(1); } }
+
+/* ---------- 밀랍 봉인: 울퉁불퉁한 가장자리, 눌린 테 장식, 음각 글자 ---------- */
+.stamp {
+  width: 108px; height: 108px; right: 20px; bottom: 22px;
+  color: var(--wax-ink); font-size: 16px; letter-spacing: .02em;
+  text-shadow: 0 1px 0 rgba(255,255,255,.22), 0 -1px 0 rgba(0,0,0,.45);
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255,255,255,.35) 0 6%, transparent 16%),
+    radial-gradient(circle at 50% 50%, var(--wax) 0 30%, var(--wax-dk) 31% 33%, var(--wax-hi) 34% 36%, var(--wax) 37% 60%, var(--wax-dk) 80%);
+  box-shadow:
+    6px -4px 0 -2px var(--wax), -5px 6px 0 -3px var(--wax-dk), 4px 7px 0 -4px var(--wax-dk), -7px -3px 0 -4px var(--wax),
+    2px -7px 0 -5px var(--wax-hi), 9px 3px 0 -6px var(--wax),
+    inset 0 -4px 6px rgba(0,0,0,.35), inset 0 3px 4px rgba(255,255,255,.18),
+    0 6px 10px rgba(0,0,0,.45);
+}
+/* 테두리 구슬 홈 */
+.stamp::after {
+  inset: 6px; border: 0; opacity: 1;
+  background: repeating-conic-gradient(from 0deg, rgba(0,0,0,.42) 0 4deg, rgba(255,255,255,.12) 4deg 6deg, transparent 6deg 15deg);
+  -webkit-mask: radial-gradient(circle, transparent 0 calc(50% - 7px), #000 calc(50% - 7px) calc(50% - 2px), transparent calc(50% - 2px));
+          mask: radial-gradient(circle, transparent 0 calc(50% - 7px), #000 calc(50% - 7px) calc(50% - 2px), transparent calc(50% - 2px));
+}
+/* 위 십자 문장과 아래 작은 장식 */
+.stamp::before {
+  content: '✠'; position: absolute; left: 0; right: 0; top: 17px; font-size: 13px; line-height: 1; text-align: center;
+  color: var(--wax-ink); text-shadow: 0 1px 0 rgba(255,255,255,.22), 0 -1px 0 rgba(0,0,0,.45);
+}
+.stamp small { color: var(--wax-ink); opacity: .9; font-size: 8px; letter-spacing: .2em; }
+.stamp small::after { content: '◆ · ◆'; display: block; margin-top: 3px; font-size: 7px; letter-spacing: .1em; }
+.stamp.ok { --wax: #2c6e44; --wax-hi: #4e9f68; --wax-dk: #153b24; --wax-ink: #0e2918; }
+.stamp.no { --wax: #962030; --wax-hi: #c8475a; --wax-dk: #540c17; --wax-ink: #3a0710; }
+.stamp.ok, .stamp.no { color: var(--wax-ink); }
+
+/* ---------- 도트 성당 홀 배경 (js/nave.js) ----------
+   벽·첨두창·빛줄기·횃불은 캔버스가 그린다. 예전 CSS 벽, 창, 번짐, 천장등은 숨긴다. */
+#hall-nave { position: absolute; left: 0; top: 0; image-rendering: pixelated; pointer-events: none; }
+#inspection .wall, #inspection .arches, #inspection .glass-spill, #inspection .lamps { display: none; }
+#hall-lanterns { position: absolute; left: 0; top: 0; image-rendering: pixelated; pointer-events: none; }
