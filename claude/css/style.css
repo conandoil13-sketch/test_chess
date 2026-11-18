@@ -86,17 +86,7 @@ kbd { font: inherit; font-size: 11px; padding: 1px 5px; margin-right: 3px; borde
   cursor: grab; user-select: none; touch-action: none;
 }
 .viewport.dragging { cursor: grabbing; }
-.sky {
-  position: absolute; inset: 0;
-  background:
-    radial-gradient(ellipse 70% 40% at 50% 0%, rgba(90,140,170,.22), transparent 70%),
-    radial-gradient(ellipse 120% 70% at 50% 100%, #0b0f16 0%, transparent 60%),
-    linear-gradient(180deg, #17212d 0%, #0d131b 45%, #07090d 100%);
-}
-.sky::after {
-  content: ''; position: absolute; inset: 0; opacity: .5;
-  background-image: radial-gradient(1px 1px at 12% 18%, #cfe3ff 50%, transparent), radial-gradient(1px 1px at 33% 8%, #fff 50%, transparent), radial-gradient(1px 1px at 58% 14%, #cfe3ff 50%, transparent), radial-gradient(1px 1px at 76% 6%, #fff 50%, transparent), radial-gradient(1px 1px at 88% 20%, #cfe3ff 50%, transparent), radial-gradient(1px 1px at 22% 30%, #fff 50%, transparent), radial-gradient(1px 1px at 66% 28%, #fff 50%, transparent);
-}
+.sky { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; background: #05060d; }
 .camera { position: absolute; left: 50%; top: 58%; transform-style: preserve-3d; transform-origin: 0 0; will-change: transform; }
 .world { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
 .plane { position: absolute; left: 0; top: 0; box-shadow: 0 0 0 6px #18140f, 0 0 0 10px #050403, 0 0 140px 30px rgba(0,0,0,.85); }
@@ -175,8 +165,8 @@ kbd { font: inherit; font-size: 11px; padding: 1px 5px; margin-right: 3px; borde
 .atmo::before {
   content: ''; position: absolute; inset: 0;
   background:
-    linear-gradient(180deg, rgba(13,19,27,.96) 0%, rgba(13,19,27,.6) 12%, rgba(13,19,27,0) 32%),
-    radial-gradient(ellipse 75% 70% at 50% 58%, transparent 55%, rgba(2,3,6,.7) 100%);
+    linear-gradient(180deg, rgba(5,6,13,.55) 0%, rgba(5,6,13,0) 14%),
+    radial-gradient(ellipse 80% 75% at 50% 58%, transparent 60%, rgba(2,3,6,.6) 100%);
 }
 .atmo::after {
   content: ''; position: absolute; inset: -20%; opacity: .32; mix-blend-mode: screen;
@@ -270,3 +260,41 @@ kbd { font: inherit; font-size: 11px; padding: 1px 5px; margin-right: 3px; borde
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
 }
+
+/* ---------- 승급소 · 우주선 (시각 시안) ---------- */
+.station { position: absolute; left: 0; top: 0; transform-style: preserve-3d; pointer-events: none; }
+.station .isle { position: absolute; transform-style: preserve-3d; }
+.isle-floor { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+.station-white .isle-floor { box-shadow: 0 0 0 3px #14131b, 0 0 80px 18px rgba(200,230,255,.22); }
+.station-black .isle-floor { box-shadow: 0 0 0 3px #05040a, 0 0 80px 18px rgba(199,155,255,.26); }
+.isle-face { position: absolute; transform-origin: 0 0; }
+.isle-face canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+.isle-face::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 45%, rgba(4,4,10,.55)); pointer-events: none; }
+.isle-face.w::after, .isle-face.e::after { background: linear-gradient(90deg, rgba(0,0,0,.25), rgba(4,4,10,.6)); }
+.station-white { --crystal: #cfe8ff; --glow: rgba(230,245,255,.95); --glow-soft: rgba(170,210,255,.35); }
+.station-black { --crystal: #c79bff; --glow: rgba(225,200,255,.92); --glow-soft: rgba(180,140,255,.35); }
+.isle-face.s { left: 0; top: 100%; width: 100%; height: 128px; transform: rotateX(-90deg); clip-path: polygon(0 0, 100% 0, 100% 40%, 91% 56%, 78% 70%, 62% 88%, 50% 100%, 37% 85%, 22% 68%, 9% 54%, 0 40%); }
+.isle-face.w, .isle-face.e { top: 0; width: 128px; height: 100%; transform: rotateY(90deg); clip-path: polygon(0 0, 40% 0, 56% 9%, 72% 24%, 90% 40%, 100% 52%, 84% 64%, 66% 80%, 52% 93%, 40% 100%, 0 100%); }
+.isle-face.w { left: 0; }
+.isle-face.e { left: 100%; }
+
+.station .bb { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+.station .bb .stand { position: absolute; left: 0; top: 0; transform-origin: 0 0; transform: rotateX(calc(var(--tilt) * -1)) translate(-50%, -100%); }
+.station .bb canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; position: relative; }
+.station .tower canvas { filter: drop-shadow(0 0 14px var(--glow-soft)); }
+.station .cloud .stand { opacity: .9; }
+.station .beam { position: absolute; left: 50%; top: auto; bottom: 92%; width: 8px; margin-left: -4px; height: 560px; background: linear-gradient(to top, var(--glow), transparent); opacity: .5; filter: blur(1px); animation: beamPulse 3.2s ease-in-out infinite; }
+.station .beam::before { content: ''; position: absolute; inset: 0 -14px; background: linear-gradient(to top, var(--glow-soft), transparent 70%); }
+.station .halo { position: absolute; left: 50%; top: 10px; width: 120px; height: 120px; margin: -60px 0 0 -60px; border-radius: 50%; background: radial-gradient(circle, var(--glow) 0%, var(--glow-soft) 30%, transparent 68%); mix-blend-mode: screen; animation: haloPulse 3.2s ease-in-out infinite; }
+@keyframes beamPulse { 50% { opacity: .8; } }
+@keyframes haloPulse { 50% { transform: scale(1.18); opacity: .85; } }
+.tower-tag { position: absolute; left: 50%; bottom: 100%; margin-bottom: 14px; transform: translateX(-50%); white-space: nowrap; font-size: 18px; padding: 4px 10px 3px; color: #10131c; background: var(--crystal); box-shadow: 0 0 0 3px #0a0810, 0 0 20px var(--glow-soft); }
+
+.ship { position: absolute; left: 0; top: 0; transform-style: preserve-3d; transition: opacity .2s; }
+.ship .shadow { position: absolute; left: -14px; top: -6px; width: 28px; height: 12px; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.55), transparent); }
+.ship.flying .shadow { opacity: 0; }
+.ship .stand { position: absolute; left: 0; top: 0; width: 40px; height: 73px; transform-origin: 0 0; transform: rotateX(calc(var(--tilt) * -1)) translate(-50%, -100%); }
+.ship img { display: block; width: 100%; height: 100%; image-rendering: pixelated; transform: rotate(var(--lean, 0deg)); }
+.ship.flying img { filter: drop-shadow(0 0 6px rgba(255,200,120,.9)) drop-shadow(0 14px 12px rgba(255,150,60,.8)); }
+.ship .stand::after { content: ''; position: absolute; left: 50%; top: 80%; width: 10px; margin-left: -5px; height: 0; background: linear-gradient(to bottom, rgba(255,230,160,.95), rgba(255,140,60,.5) 40%, transparent); filter: blur(1.5px); transition: height .4s; }
+.ship.flying .stand::after { height: 110px; }

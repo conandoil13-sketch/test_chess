@@ -5,6 +5,8 @@ import { sfx, setSound, soundOn, unlockAudio } from './audio.js';
 import { createTiles } from './tiles.js';
 import { createInspection } from './inspection.js';
 import { rng } from './noise.js';
+import { createSpace } from './space.js';
+import { createStations } from './station.js';
 
 const TILT = 42;
 const COS = Math.cos((TILT * Math.PI) / 180);
@@ -54,7 +56,7 @@ const cam = { x: (state.pos.x + 0.5) * CELL, y: (state.pos.y + 0.5) * CELL, z: 0
 const camT = { ...cam };
 const clampCam = () => {
   camT.x = Math.max(0, Math.min(SIZE, camT.x));
-  camT.y = Math.max(0, Math.min(SIZE, camT.y));
+  camT.y = Math.max(-4 * CELL, Math.min(SIZE + 4 * CELL, camT.y)); // 행성 밖 승급소까지 볼 수 있게
 };
 function zoomBy(f) {
   camT.z = Math.max(0.3, Math.min(1.5, camT.z * f));
@@ -338,7 +340,8 @@ els.mini.addEventListener('click', e => {
 });
 
 // ---------- 루프 ----------
-let world = null, fxCtx = null, last = performance.now(), fxLast = 0;
+let world = null, stations = null, fxCtx = null, last = performance.now(), fxLast = 0, spaceLast = 0;
+const space = createSpace($('#space'));
 function frame(t) {
   const dt = Math.min(0.05, (t - last) / 1000);
   last = t;
@@ -357,6 +360,11 @@ function frame(t) {
   cam.y += (camT.y - cam.y) * k;
   cam.z += (camT.z - cam.z) * k;
   applyCam();
+  if (stations && state.mode !== 'inspect') stations.update(t);
+  if (t - spaceLast > 33 && state.mode !== 'inspect') {
+    spaceLast = t;
+    space.draw(t, cam.x - SIZE / 2, cam.y - SIZE / 2, cam.z);
+  }
   if (t - fxLast > 70 && world && state.mode !== 'inspect') {
     fxLast = t;
     drawFx(fxCtx, world, t);
@@ -423,6 +431,7 @@ async function boot() {
     occupancy.set(key, n + 1);
   }
   els.pieces.append(me);
+  stations = createStations({ worldEl: els.world, piecesEl: els.pieces, CELL, SIZE, S, pads: world.pads });
 
   buildMini();
   drawPortrait();

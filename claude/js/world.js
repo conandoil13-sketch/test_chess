@@ -250,6 +250,28 @@ function wallTower(ctx, x0, y0, cyber) {
   R(ctx, x + 3, y + d - h + 3, 2, 2, cyber ? '#1f5d68' : '#2a2520');
 }
 
+function drawPad(ctx, cx, cy, accent, side) {
+  for (let dy = -11; dy <= 11; dy++) for (let dx = -11; dx <= 11; dx++) {
+    const oct = Math.abs(dx) + Math.abs(dy);
+    if (oct > 16) continue;
+    const d = Math.hypot(dx, dy);
+    let col = '#2a2f3b';
+    if (oct >= 15 || Math.abs(dx) === 11 || Math.abs(dy) === 11) col = '#636a80';
+    else if (d > 6.6 && d < 8) col = '#3d4456';
+    else if (d < 3.2) col = '#1b1f28';
+    else if ((dx + dy) % 4 === 0 && d > 3.2 && d < 6.6) col = '#262a35';
+    R(ctx, cx + dx, cy + dy, 1, 1, col);
+  }
+  // 착륙 표식 (진행 방향 화살표: 행성 밖 승급소 쪽)
+  const dir = side === 'top' ? -1 : 1;
+  for (const [dx, dy] of [[0, 0], [-1, 1], [1, 1], [-2, 2], [2, 2]]) R(ctx, cx + dx, cy + dir * (-5 - dy) + (dir > 0 ? 0 : 0), 1, 1, accent);
+  R(ctx, cx - 1, cy - 1, 3, 3, '#11141a');
+  // 옆 관제 부스
+  R(ctx, cx + 13, cy - 3, 4, 6, '#404759');
+  R(ctx, cx + 13, cy - 6, 4, 3, '#59617a');
+  R(ctx, cx + 14, cy - 2, 2, 1, '#7fe9ff');
+}
+
 // ---------- 생성 ----------
 export function generateWorld(canvas) {
   canvas.width = W;
@@ -316,10 +338,13 @@ export function generateWorld(canvas) {
       continue;
     }
     const dens = { cyber: [0.86, 0.5], city: [0.78, 0.32], town: [0.42, 0.06], farm: [0, 0], forest: [0, 0], meadow: [0, 0] }[b];
-    const large = r() < dens[1] ? Math.floor(r() * 4) : -1;
+    let large = r() < dens[1] ? Math.floor(r() * 4) : -1;
+    const edge = cy === 0 ? 'top' : cy === N - 1 ? 'bottom' : null;
+    if ((edge === 'top' && large < 2) || (edge === 'bottom' && large >= 2)) large = -1;
     let barn = b === 'farm' && r() < 0.65 ? Math.floor(r() * 16) : -1;
     for (let j = 0; j < 4; j++) for (let i = 0; i < 4; i++) {
       const q = (j >> 1) * 2 + (i >> 1);
+      if (edge && (i === 1 || i === 2) && (edge === 'top' ? j <= 1 : j >= 2)) continue; // 발착장 자리
       const lx = ox + LOT[i], ly = oy + LOT[j];
       if (q === large) {
         if ((i & 1) === 0 && (j & 1) === 0 && landOK(lx + 10, ly + 10, 0.2)) {
@@ -394,6 +419,22 @@ export function generateWorld(canvas) {
     }
   }
 
+  // 양 끝 줄 발착장 (승급소행 우주선) — 시각 시안
+  const pads = [];
+  const decals = [];
+  for (let x = 0; x < N; x++) {
+    for (const side of ['top', 'bottom']) {
+      const px = x * C + 32, py = side === 'top' ? 16 : (N - 1) * C + 46;
+      const accent = side === 'top' ? '#ffd27a' : '#c79bff';
+      pads.push({ x: px, y: py, side, col: x });
+      decals.push(c => drawPad(c, px, py, accent, side));
+      for (let k = 0; k < 8; k++) {
+        const a = (k / 8) * Math.PI * 2;
+        light({ type: 'pad', k, x: Math.round(px + Math.cos(a) * 9.5), y: Math.round(py + Math.sin(a) * 9.5), c: accent });
+      }
+    }
+  }
+
   // 성벽 · 성문 · 망루
   const isSettled = b => b === 'city' || b === 'cyber' || b === 'town';
   const wr = rng(77);
@@ -429,6 +470,7 @@ export function generateWorld(canvas) {
 
   ctx.save();
   ctx.translate(0, OY);
+  decals.forEach(f => f(ctx));
   shadows.forEach(f => f(ctx));
   objs.sort((p, q) => p.k - q.k).forEach(o => o.f(ctx));
   ctx.restore();
@@ -443,7 +485,7 @@ export function generateWorld(canvas) {
     const gx = Math.floor(sr() * W), gy = Math.floor(sr() * W);
     if (waterDist(gx / C, gy / C) < -0.03) sparkles.push({ x: gx, y: gy, p: sr() });
   }
-  return { cells, lights, sparkles };
+  return { cells, lights, sparkles, pads };
 }
 
 export function drawFx(ctx, world, t) {
@@ -457,6 +499,7 @@ export function drawFx(ctx, world, t) {
       case 'win': a = 0.6 + 0.25 * Math.sin(t * 0.0011 + L.p * 40); break;
       case 'cwin': a = 0.55 + 0.4 * Math.sin(t * 0.0017 + L.p * 90); break;
       case 'neon': a = hash(Math.floor(t / 90), Math.floor(L.p * 1e5), 5) > 0.975 ? 0.12 : 0.9; break;
+      case 'pad': { const ph = ((t * 0.0011 - L.k / 8) % 1 + 1) % 1; a = ph < 0.16 ? 1 : 0.14; break; }
       case 'wallneon': a = 0.28 + 0.08 * Math.sin(t * 0.003 + L.p * 30); break;
       case 'beacon': a = (t * 0.001 + L.p * 1.6) % 1.6 < 0.28 ? 1 : 0.06; break;
       case 'torch': a = 0.62 + 0.22 * Math.sin(t * 0.021 + L.p * 20) + 0.14 * Math.sin(t * 0.037 + L.p * 7); break;
@@ -481,5 +524,5 @@ export function drawFx(ctx, world, t) {
 
 export function cellLabel(world, x, y) {
   const { b, frac } = world.cells[y][x];
-  return BIOME_NAMES[b] + (frac > 0 && b !== 'lake' ? ' · 강변' : '');
+  return BIOME_NAMES[b] + (frac > 0 && b !== 'lake' ? ' · 강변' : '') + (y === 0 || y === N - 1 ? ' · 승급소 발착장' : '');
 }
