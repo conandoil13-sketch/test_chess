@@ -114,8 +114,8 @@ function renderGrid(canvas, g, W, H, T) {
       else if (v === 4) c = T.glow;
       else if (v === 5) c = r || rr ? T.acc[2] : l || top ? T.acc[0] : T.acc[1];
       else if (v === 6) c = T.dark;
-      else if (v === 7) c = '#fffbe8';
-      else if (v === 8) c = top ? '#ffd36b' : '#ff8a3a';
+      else if (v === 7) c = '#f2fdff';
+      else if (v === 8) c = top ? '#9fe8ff' : '#4f8dff';
       else if (v === 9) c = r || rr ? T.leaf[2] : l || top ? T.leaf[0] : T.leaf[1];
     } else if (get(x + 1, y) || get(x - 1, y) || get(x, y + 1) || get(x, y - 1)) {
       const nb = [get(x + 1, y), get(x - 1, y), get(x, y + 1), get(x, y - 1)];
@@ -139,22 +139,31 @@ function gridTools(W, H) {
   return { g, set, rect, disc };
 }
 
-// 12×22 우주선. frame: 0 정지, 1·2 분사
+// 14×30 우주선: 고딕 첨탑을 닮은 로켓. 바늘 기수, 첨두창, 버팀벽 모양 날개. frame: 0 정지, 1·2 분사
 export function drawShip(canvas, theme, frame = 0) {
-  const W = 12, H = 22;
+  const W = 14, H = 30;
   const { g, set, rect } = gridTools(W, H);
-  rect(5, 1, 2, 1, 5); rect(4, 2, 4, 1, 5); rect(3, 3, 6, 1, 1);
-  rect(3, 4, 6, 10, 1);
-  rect(5, 6, 2, 2, 4);
-  rect(3, 10, 6, 1, 5);
-  set(2, 11, 3); rect(1, 12, 2, 3, 3); set(9, 11, 3); rect(9, 12, 2, 3, 3);
-  rect(4, 14, 4, 1, 1); rect(4, 15, 4, 1, 3);
+  const both = (x, y, w, h, v) => { rect(x, y, w, h, v); rect(W - x - w, y, w, h, v); };
+  rect(6, 1, 2, 2, 5);               // 꼭대기 장식
+  rect(6, 3, 2, 3, 1);               // 바늘 기수
+  rect(5, 6, 4, 3, 1);
+  both(4, 6, 1, 2, 3);               // 작은 피너클
+  rect(4, 8, 6, 1, 5);               // 왕관 띠
+  rect(4, 9, 6, 11, 1);              // 몸체
+  rect(6, 10, 2, 3, 4);              // 장미창
+  both(5, 14, 1, 4, 4);              // 첨두 슬릿
+  rect(3, 19, 8, 1, 5);              // 허리 띠
+  rect(4, 20, 6, 3, 1);
+  // 버팀벽 날개
+  both(3, 15, 1, 3, 3); both(2, 18, 1, 2, 3); both(1, 20, 1, 4, 3); both(2, 13, 1, 3, 3);
+  set(2, 12, 3); set(W - 3, 12, 3);
+  rect(5, 23, 4, 2, 3);              // 엔진
   if (frame) {
     const len = frame === 1 ? 5 : 4;
-    rect(4, 16, 4, 1, 7); rect(5, 17, 2, 1, 7);
-    rect(4, 17, 1, len - 1, 8); rect(7, 17, 1, len - 2, 8); rect(5, 18, 2, len, 8);
+    rect(5, 25, 4, 1, 7); rect(6, 26, 2, 1, 7);
+    rect(5, 26, 1, len - 1, 8); rect(8, 26, 1, len - 2, 8); rect(6, 27, 2, len - 1, 8);
   }
-  return renderGrid(canvas, g, W, H, THEME[theme]);
+  return renderGrid(canvas, g, W, H, GOTHIC[theme]);
 }
 
 // ---------- 승급소 (고딕 첨탑 시안) ----------

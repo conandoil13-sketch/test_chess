@@ -7,6 +7,7 @@ import { createInspection } from './inspection.js';
 import { rng } from './noise.js';
 import { createSpace } from './space.js';
 import { createStations } from './station.js';
+import { createNave } from './nave.js';
 
 const TILT = 42;
 const COS = Math.cos((TILT * Math.PI) / 180);
@@ -377,12 +378,14 @@ function frame(t) {
 async function boot() {
   const bootStatus = $('#boot-status');
   const bar = $('#boot-bar');
+  const planet = createNave($('#boot-nave'), { scene: 'boot' });
   const nextFrame = () => new Promise(r => requestAnimationFrame(() => setTimeout(r, 30)));
   bar.style.width = '18%';
   await nextFrame();
   bootStatus.textContent = '지형 · 성벽 · 구역 생성 중…';
   await nextFrame();
   world = generateWorld(els.ground);
+  planet.setTexture(els.ground, OY, W);
   bar.style.width = '72%';
   bootStatus.textContent = '주민 위치 수신 중…';
   await nextFrame();
@@ -452,7 +455,7 @@ async function boot() {
     unlockAudio();
     sfx.confirm();
     $('#boot').classList.add('gone');
-    setTimeout(() => $('#boot').remove(), 900);
+    setTimeout(() => { planet.stop(); $('#boot').remove(); }, 900);
     state.mode = 'explore';
     camT.z = 0.9;
     zoomBy(1);

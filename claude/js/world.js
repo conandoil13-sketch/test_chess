@@ -74,12 +74,12 @@ const CURB = [70, 68, 66];
 const NEON_LINE = [70, 210, 235];
 
 const ROOFS = [
-  ['#9b4535', '#73302a', '#c06049', '#45201b'],
-  ['#47706d', '#33524f', '#5f8e89', '#1f3433'],
-  ['#7a5a3a', '#5a4128', '#96714a', '#33241a'],
-  ['#5b5f7a', '#43465c', '#767b9b', '#272938'],
+  ['#3d4358', '#2c3142', '#566080', '#1a1d28'],
+  ['#3f6a6a', '#2d4c4c', '#5a8c88', '#1a2e2e'],
+  ['#4a3f5c', '#352c44', '#6a5a88', '#1f1a29'],
+  ['#5e3a3c', '#432a2c', '#7c4e50', '#261718'],
 ];
-const WALLS = [['#cbb88f', '#9d8c69'], ['#a8a091', '#7e776a'], ['#d8cfb8', '#a99f88'], ['#8f8577', '#6a6256']];
+const WALLS = [['#9a97a6', '#6c6a79'], ['#8a8698', '#5f5c6e'], ['#a8a4a8', '#7a767c'], ['#7d7a8c', '#555264']];
 const TREES = [['#3f6b3a', '#2c4f2c', '#5a8a4a'], ['#4b7a3e', '#335a2d', '#6a9c52'], ['#5e6e34', '#434f25', '#7c8c44']];
 const PINES = [['#2f5a3c', '#1f402b'], ['#365f3a', '#24462b']];
 const NEONS = ['#3ff0ff', '#ff4fd8', '#b4ff4f', '#ffb03f'];
@@ -145,34 +145,59 @@ function paintGround(ctx, cells) {
 }
 
 // ---------- 오브젝트 그리기 (오블리크 시점: 윗면은 높이만큼 위로) ----------
+// 고딕 + 사이버펑크: 회청색 돌, 뾰족 박공·첨탑, 첨두창(1×2)과 네온.
 function drawHouse(ctx, b) {
   const { x, y, w, d, h } = b;
   const fy = y + d - h;
-  R(ctx, x, fy, w, h, b.wall[0]);
-  R(ctx, x + w - 1, fy, 1, h, b.wall[1]);
-  R(ctx, x, y + d - 1, w, 1, b.wall[1]);
-  if (b.timber) for (let i = x + 2; i < x + w - 1; i += 3) R(ctx, i, fy + 1, 1, h - 1, '#4b3628');
-  R(ctx, x + (w >> 1) - 1, y + d - 3, 2, 3, '#22180f');
-  for (const wi of b.wins) R(ctx, wi.x, wi.y, 1, 1, wi.lit ? '#ffd27f' : '#2b2a33');
+  // 지붕(윗면): 슬레이트
   const ry = y - h - 1, rh = d + 1, half = Math.ceil(rh / 2);
   R(ctx, x - 1, ry, w + 2, rh, b.roof[1]);
   R(ctx, x - 1, ry + half, w + 2, rh - half, b.roof[0]);
   R(ctx, x - 1, ry + half - 1, w + 2, 1, b.roof[2]);
   R(ctx, x - 1, ry + rh - 1, w + 2, 1, b.roof[3]);
-  if (b.chim) R(ctx, x + w - 3, ry - 2, 2, 3, '#5d5650');
-  R(ctx, x, fy, w, 1, 'rgba(0,0,0,.35)');
+  // 정면 벽 + 버팀벽 줄
+  R(ctx, x, fy, w, h, b.wall[0]);
+  R(ctx, x + w - 1, fy, 1, h, b.wall[1]);
+  R(ctx, x, y + d - 1, w, 1, b.wall[1]);
+  if (w >= 8) R(ctx, x + (w >> 1) - (w & 1 ? 0 : 1) - 2, fy + 1, 1, h - 1, b.wall[1]);
+  if (w >= 8) R(ctx, x + (w >> 1) + 2, fy + 1, 1, h - 1, b.wall[1]);
+  // 첨두 문
+  const dx = x + (w >> 1) - 1;
+  R(ctx, dx, y + d - 3, 2, 3, '#14121a');
+  R(ctx, dx, y + d - 4, 1, 1, '#14121a');
+  // 첨두창(1×2)
+  for (const wi of b.wins) R(ctx, wi.x, wi.y, 1, 2, wi.lit ? wi.c : '#23222c');
+  // 정면 박공(뾰족 지붕)과 꼭대기 장식
+  const gh = Math.min(5, Math.ceil(w / 2));
+  for (let k = 0; k < gh; k++) {
+    const gw = Math.max(1, w - k * 2), gx = x + ((w - gw) >> 1);
+    R(ctx, gx, fy - 1 - k, gw, 1, b.wall[0]);
+    R(ctx, gx, fy - 1 - k, 1, 1, b.roof[3]);
+    R(ctx, gx + gw - 1, fy - 1 - k, 1, 1, b.roof[3]);
+  }
+  R(ctx, x + (w >> 1) - (w & 1 ? 0 : 1), fy - 2 - gh, 1, 2, b.roof[2]);
+  R(ctx, x + (w >> 1) - (w & 1 ? 0 : 1), fy - gh + 1, 1, 1, b.rose ? '#ffe2a8' : '#2a2833');
+  // 모서리 작은 첨탑
+  R(ctx, x, fy - 2, 1, 2, b.wall[1]);
+  R(ctx, x + w - 1, fy - 2, 1, 2, b.wall[1]);
+  R(ctx, x, fy, w, 1, 'rgba(0,0,0,.3)');
 }
 
 function drawCyber(ctx, b) {
   const { x, y, w, d, h } = b;
   const fy = y + d - h;
-  R(ctx, x, fy, w, h, '#252a38');
-  R(ctx, x + w - 1, fy, 1, h, '#191c26');
-  R(ctx, x, fy, 1, h, '#323849');
-  for (const wi of b.wins) R(ctx, wi.x, wi.y, 1, 1, '#1c2131');
-  R(ctx, x, y - h, w, d, '#3a4056');
+  R(ctx, x, fy, w, h, '#262a3a');
+  R(ctx, x + w - 1, fy, 1, h, '#171a24');
+  R(ctx, x, fy, 1, h, '#363c53');
+  // 버팀벽 갈비(창 사이 어두운 기둥)
+  for (let xx = x + 2; xx < x + w - 1; xx += 2) R(ctx, xx, fy + 2, 1, h - 3, '#1b1e2b');
+  for (const wi of b.wins) { R(ctx, wi.x, wi.y, 1, 2, '#1c2131'); }
+  // 윗면 + 뾰족한 톱니 지붕
+  R(ctx, x, y - h, w, d, '#353b52');
   R(ctx, x, y - h, w, 1, '#4f5674');
+  for (let i = 0; i < w; i += 2) R(ctx, x + i, fy - 1 - (i % 4 === 0 ? 1 : 0), 1, 1 + (i % 4 === 0 ? 1 : 0), '#5a6182');
   if (w > 5 && b.unit) R(ctx, x + 1, y - h + 1, 2, 2, '#262b3b');
+  if (w >= 6) { R(ctx, x + (w >> 1), y - h - 5, 1, 5, '#6a7190'); R(ctx, x + (w >> 1) - 1, y - h - 2, 3, 1, '#4f5674'); }
   R(ctx, x, fy, w, 1, '#20444f');
 }
 
@@ -180,22 +205,30 @@ function drawTower(ctx, b) {
   const { x, y, w, d, h } = b;
   const fy = y + d - h;
   if (b.style === 'stone') {
-    R(ctx, x, fy, w, h, '#9b9385');
-    R(ctx, x + w - 1, fy, 1, h, '#6f685d');
-    R(ctx, x, fy, 1, h, '#b4ac9c');
-    for (let yy = fy + 4; yy < y + d - 3; yy += 5) R(ctx, x + (w >> 1), yy, 1, 2, '#2a2520');
+    R(ctx, x, fy, w, h, '#8a8897');
+    R(ctx, x + w - 1, fy, 1, h, '#5d5b6a');
+    R(ctx, x, fy, 1, h, '#a9a7b5');
+    for (let yy = fy + 4; yy < y + d - 3; yy += 6) { R(ctx, x + (w >> 1), yy, 1, 3, '#24222c'); R(ctx, x + (w >> 1), yy - 1, 1, 1, '#4a4856'); }
+    R(ctx, x - 1, fy - 1, w + 2, 1, '#6e6c7c');
+    // 가파른 첨탑 + 모서리 피너클
     for (let k = 0; ; k++) {
-      const off = Math.floor(k / 2), ww = w + 2 - off * 2;
+      const off = Math.floor(k / 3), ww = w - off * 2;
       if (ww <= 0) break;
-      R(ctx, x - 1 + off, fy - 1 - k, ww, 1, b.roof[1]);
-      R(ctx, x - 1 + off, fy - 1 - k, Math.ceil(ww / 2), 1, b.roof[0]);
+      R(ctx, x + off, fy - 2 - k, ww, 1, b.roof[1]);
+      R(ctx, x + off, fy - 2 - k, Math.ceil(ww / 2), 1, b.roof[0]);
     }
+    R(ctx, x + (w >> 1), fy - 4 - Math.ceil(w * 1.5), 1, 2, b.roof[2]);
+    R(ctx, x - 1, fy - 4, 1, 3, '#a9a7b5');
+    R(ctx, x + w, fy - 4, 1, 3, '#5d5b6a');
   } else {
     R(ctx, x, fy, w, h, '#2b3040');
     R(ctx, x + w - 1, fy, 1, h, '#1b1e28');
+    R(ctx, x, fy, 1, h, '#3a4058');
     R(ctx, x, y - h, w, d, '#3a4056');
     R(ctx, x + (w >> 1), fy + 2, 1, h - 3, '#1d4a55');
-    R(ctx, x + (w >> 1), y - h - 6, 1, 6, '#8a90a8');
+    for (let i = 0; i < w; i += 2) R(ctx, x + i, fy - 2, 1, 2, '#5a6182');
+    R(ctx, x + (w >> 1), y - h - 8, 1, 8, '#8a90a8');
+    R(ctx, x + (w >> 1) - 1, y - h - 4, 3, 1, '#5a6182');
   }
 }
 
@@ -218,58 +251,101 @@ function drawTree(ctx, t) {
   }
 }
 
-const WH = 6;
+// 성벽: 회청색 돌, 버팀벽과 첨두 총안, 뾰족한 흉벽. 사이버 구역은 아래에 네온 띠.
+const WH = 7;
+const WS = { top: '#8b8998', merlon: '#a6a4b3', face: '#4d4b5a', faceHi: '#625f70', rib: '#393745', ribHi: '#5c5a6b', slit: '#1a1922', pin: '#b4b2c0' };
 function hWall(ctx, x0, y0, gate, neon) {
-  R(ctx, x0, y0 - WH - 1, C, 3, '#a39d8f');
-  for (let i = 0; i < C; i += 4) R(ctx, x0 + i, y0 - WH - 2, 2, 1, '#bdb7a8');
-  R(ctx, x0, y0 + 2 - WH, C, WH, '#6c675d');
-  R(ctx, x0, y0 + 2 - WH, C, 1, '#857f73');
-  for (let i = 0; i < C; i++) if (hash(x0 + i, y0, 3) > 0.78) R(ctx, x0 + i, y0 + 3 - WH + Math.floor(hash(x0 + i, y0, 4) * 4), 1, 1, '#59544b');
-  if (neon) R(ctx, x0, y0 - 1, C, 1, '#1f5d68');
+  R(ctx, x0, y0 - WH - 1, C, 3, WS.top);
+  R(ctx, x0, y0 - WH + 1, C, 1, '#6c6a79');
+  for (let i = 0; i < C; i += 4) { R(ctx, x0 + i, y0 - WH - 2, 2, 1, WS.merlon); R(ctx, x0 + i, y0 - WH - 3, 1, 1, WS.merlon); }
+  R(ctx, x0, y0 + 2 - WH, C, WH, WS.face);
+  R(ctx, x0, y0 + 2 - WH, C, 1, WS.faceHi);
+  for (let i = 0; i < C; i += 8) {
+    R(ctx, x0 + i, y0 + 2 - WH, 1, WH, WS.ribHi);
+    R(ctx, x0 + i + 1, y0 + 2 - WH, 1, WH, WS.rib);
+    R(ctx, x0 + i + 4, y0 + 4 - WH, 1, 3, WS.slit);
+  }
+  for (let i = 0; i < C; i++) if (hash(x0 + i, y0, 3) > 0.84) R(ctx, x0 + i, y0 + 3 - WH + Math.floor(hash(x0 + i, y0, 4) * 5), 1, 1, '#43414f');
+  if (neon) R(ctx, x0, y0 + 1, C, 1, '#1f5d68');
   if (gate) {
     const gx = x0 + C / 2 - 4;
-    R(ctx, gx - 2, y0 - WH - 4, 12, 4, '#b8b2a3');
-    R(ctx, gx - 2, y0 - WH, 12, 3, '#7a746a');
-    R(ctx, gx + 1, y0 - 2, 6, 4, '#15110d');
-    R(ctx, gx + 2, y0 - 3, 4, 1, '#15110d');
+    R(ctx, gx - 3, y0 - WH - 5, 14, 5, '#9a98a8');
+    R(ctx, gx - 3, y0 - WH - 5, 14, 1, WS.pin);
+    R(ctx, gx - 3, y0 - WH, 14, WH + 2, '#5c5a6b');
+    R(ctx, gx + 10, y0 - WH, 1, WH + 2, '#403e4c');
+    // 양쪽 작은 첨탑
+    for (const px of [gx - 3, gx + 10]) { R(ctx, px, y0 - WH - 9, 1, 4, WS.pin); R(ctx, px, y0 - WH - 10, 1, 1, '#d2d0dc'); }
+    // 첨두 아치 문
+    R(ctx, gx + 1, y0 - 3, 6, 5, '#120f16');
+    R(ctx, gx + 2, y0 - 4, 4, 1, '#120f16');
+    R(ctx, gx + 3, y0 - 5, 2, 1, '#120f16');
+    R(ctx, gx + 3, y0 - WH - 3, 2, 1, '#2a2833');
   }
 }
 function vWall(ctx, x0, y0, gate, neon) {
-  R(ctx, x0 - 1, y0 - WH - 1, 3, C, '#a39d8f');
-  R(ctx, x0 + 1, y0 - WH - 1, 1, C, '#858072');
-  for (let i = 0; i < C; i += 4) R(ctx, x0 - 2, y0 - WH - 1 + i, 1, 2, '#bdb7a8');
+  R(ctx, x0 - 1, y0 - WH - 1, 3, C, WS.top);
+  R(ctx, x0 + 1, y0 - WH - 1, 1, C, '#6c6a79');
+  for (let i = 0; i < C; i += 4) { R(ctx, x0 - 2, y0 - WH - 1 + i, 1, 2, WS.merlon); R(ctx, x0 - 3, y0 - WH - 1 + i, 1, 1, WS.merlon); }
   if (neon) R(ctx, x0, y0 - WH - 1, 1, C, '#1f5d68');
-  if (gate) R(ctx, x0 - 2, y0 - WH - 1 + C / 2 - 4, 5, 8, '#b8b2a3');
+  if (gate) { R(ctx, x0 - 2, y0 - WH - 1 + C / 2 - 4, 5, 8, '#9a98a8'); R(ctx, x0 - 2, y0 - WH - 5 + C / 2 - 4, 1, 4, WS.pin); R(ctx, x0 + 2, y0 - WH - 5 + C / 2 - 4, 1, 4, WS.pin); }
 }
+// 성벽 교차점 망루: 뾰족 원뿔 지붕의 고딕 포탑
 function wallTower(ctx, x0, y0, cyber) {
-  const h = WH + 5, x = x0 - 4, y = y0 - 4, w = 8, d = 6;
-  R(ctx, x, y + d - h, w, h, '#777165');
-  R(ctx, x + w - 1, y + d - h, 1, h, '#57524a');
-  R(ctx, x, y - h, w, d, '#aaa496');
-  for (let i = 0; i < w; i += 2) R(ctx, x + i, y - h - 1, 1, 1, '#c3bdae');
-  R(ctx, x + 3, y + d - h + 3, 2, 2, cyber ? '#1f5d68' : '#2a2520');
+  const h = WH + 7, x = x0 - 4, y = y0 - 4, w = 8, d = 6;
+  const fy = y + d - h;
+  R(ctx, x, fy, w, h, '#5c5a6b');
+  R(ctx, x + w - 1, fy, 1, h, '#403e4c');
+  R(ctx, x, fy, 1, h, '#74727f');
+  R(ctx, x - 1, fy - 1, w + 2, 2, '#8b8998');
+  R(ctx, x + 3, fy + 4, 2, 4, cyber ? '#1f5d68' : '#1a1922');
+  R(ctx, x + 3, fy + 3, 1, 1, cyber ? '#1f5d68' : '#1a1922');
+  // 원뿔 첨탑
+  const roof = cyber ? ['#2f3446', '#3e4560', '#5a6182'] : ['#3d4358', '#535b76', '#6d7698'];
+  for (let k = 0; ; k++) {
+    const off = Math.floor(k / 2), ww = w - off * 2;
+    if (ww <= 0) break;
+    R(ctx, x + off, fy - 2 - k, ww, 1, roof[0]);
+    R(ctx, x + off, fy - 2 - k, Math.ceil(ww / 2), 1, roof[1]);
+  }
+  R(ctx, x + 3, fy - 2 - w - 2, 1, 3, roof[2]);
+  if (cyber) R(ctx, x, fy + 1, w, 1, '#1f5d68');
 }
 
+// 발착장: 팔각 석조 단, 안쪽 금속 링과 방사형 홈, 네 방위의 작은 첨탑
 function drawPad(ctx, cx, cy, accent, side) {
   for (let dy = -11; dy <= 11; dy++) for (let dx = -11; dx <= 11; dx++) {
     const oct = Math.abs(dx) + Math.abs(dy);
     if (oct > 16) continue;
     const d = Math.hypot(dx, dy);
-    let col = '#2a2f3b';
-    if (oct >= 15 || Math.abs(dx) === 11 || Math.abs(dy) === 11) col = '#636a80';
+    const edge = oct >= 15 || Math.abs(dx) === 11 || Math.abs(dy) === 11;
+    let col;
+    if (edge) col = dy < 0 || dx < 0 ? '#8b8998' : '#5c5a6b';
+    else if (oct >= 13 || Math.abs(dx) >= 10 || Math.abs(dy) >= 10) col = (dx + dy) & 1 ? '#4d4b5a' : '#55536a';
+    else if (d > 8.6) col = '#23222c';
     else if (d > 6.6 && d < 8) col = '#3d4456';
-    else if (d < 3.2) col = '#1b1f28';
-    else if ((dx + dy) % 4 === 0 && d > 3.2 && d < 6.6) col = '#262a35';
+    else if (d < 3.2) col = '#14121a';
+    else col = dx === 0 || dy === 0 || Math.abs(dx) === Math.abs(dy) ? '#3a3846' : '#2a2f3b';
     R(ctx, cx + dx, cy + dy, 1, 1, col);
   }
-  // 착륙 표식 (진행 방향 화살표: 행성 밖 승급소 쪽)
+  // 착륙 표식 (승급소 쪽 화살표)
   const dir = side === 'top' ? -1 : 1;
-  for (const [dx, dy] of [[0, 0], [-1, 1], [1, 1], [-2, 2], [2, 2]]) R(ctx, cx + dx, cy + dir * (-5 - dy) + (dir > 0 ? 0 : 0), 1, 1, accent);
-  R(ctx, cx - 1, cy - 1, 3, 3, '#11141a');
-  // 옆 관제 부스
-  R(ctx, cx + 13, cy - 3, 4, 6, '#404759');
-  R(ctx, cx + 13, cy - 6, 4, 3, '#59617a');
-  R(ctx, cx + 14, cy - 2, 2, 1, '#7fe9ff');
+  for (const [dx, dy] of [[0, 0], [-1, 1], [1, 1], [-2, 2], [2, 2]]) R(ctx, cx + dx, cy + dir * (-5 - dy), 1, 1, accent);
+  R(ctx, cx - 1, cy - 1, 3, 3, '#0d0b12');
+}
+// 발착장 옆 고딕 관제탑(원뿔 지붕, 빛나는 슬릿, 패드 쪽 다리)
+function drawGantry(ctx, x, by) {
+  const h = 14, fy = by - h;
+  R(ctx, x - 4, fy + 4, 4, 1, '#8b8998');
+  R(ctx, x - 4, fy + 5, 4, 1, '#403e4c');
+  R(ctx, x, fy, 4, h, '#5c5a6b');
+  R(ctx, x, fy, 1, h, '#74727f');
+  R(ctx, x + 3, fy, 1, h, '#403e4c');
+  R(ctx, x + 1, fy + 4, 2, 4, '#1a1922');
+  R(ctx, x + 1, fy + 10, 2, 2, '#1a1922');
+  R(ctx, x - 1, fy - 1, 6, 1, '#8b8998');
+  R(ctx, x, fy - 3, 4, 2, '#3d4358'); R(ctx, x, fy - 3, 2, 2, '#535b76');
+  R(ctx, x + 1, fy - 6, 2, 3, '#3d4358'); R(ctx, x + 1, fy - 6, 1, 3, '#535b76');
+  R(ctx, x + 1, fy - 9, 1, 3, '#a6a4b3');
 }
 
 // ---------- 생성 ----------
@@ -292,22 +368,27 @@ export function generateWorld(canvas) {
   const LOT = [8, 18, 36, 46];
   const shadowBox = (x, y, w, d, h) => shadows.push(c => R(c, x + 1, y + 1, w + Math.min(h * 0.5, 10), d + 1, SHADOW));
 
-  const addHouse = (r, x, y, w, d, h, wall, roof) => {
-    const b = { x, y, w, d, h, wall: wall || pick(r, WALLS), roof: roof || pick(r, ROOFS), timber: r() < 0.5, chim: r() < 0.4, wins: [] };
+  const addHouse = (r, x, y, w, d, h, wall, roof, neonP = 0) => {
+    const b = { x, y, w, d, h, wall: wall || pick(r, WALLS), roof: roof || pick(r, ROOFS), wins: [], rose: r() < 0.45 };
     const fy = y + d - h;
-    if (h >= 5) for (const wx of [x + 1, x + w - 2]) b.wins.push({ x: wx, y: fy + 2, lit: r() < 0.42 });
-    if (h >= 9) for (const wx of [x + 1, x + w - 2]) b.wins.push({ x: wx, y: fy + 5, lit: r() < 0.3 });
-    b.wins.filter(wi => wi.lit).forEach(wi => light({ type: 'win', x: wi.x, y: wi.y, c: WARM }));
+    const winC = () => (r() < 0.72 ? WARM : r() < 0.6 ? '#bfefff' : '#ff9be8');
+    if (h >= 5) for (const wx of [x + 1, x + w - 2]) b.wins.push({ x: wx, y: fy + 1, lit: r() < 0.5, c: winC() });
+    if (h >= 9) for (const wx of [x + 1, x + w - 2]) b.wins.push({ x: wx, y: fy + 5, lit: r() < 0.35, c: winC() });
+    b.wins.filter(wi => wi.lit).forEach(wi => light({ type: 'win', x: wi.x, y: wi.y, h: 2, c: wi.c }));
+    const gh = Math.min(5, Math.ceil(w / 2));
+    if (b.rose) light({ type: 'win', x: x + (w >> 1) - (w & 1 ? 0 : 1), y: fy - gh + 1, c: '#ffe2a8' });
+    if (r() < neonP) light({ type: 'neon', x: x + w, y: fy + 1, w: 1, h: Math.min(4, h - 2), c: pick(r, NEONS) });
     return b;
   };
   const addCyber = (r, x, y, w, d, h) => {
     const b = { x, y, w, d, h, wins: [], unit: r() < 0.6 };
     const fy = y + d - h;
-    for (let yy = fy + 3; yy < y + d - 1; yy += 2)
+    const tint = r() < 0.7 ? '#7fe9ff' : pick(r, ['#ff8fe6', '#ffd27f', '#c3a6ff']);
+    for (let yy = fy + 3; yy < y + d - 2; yy += 3)
       for (let xx = x + 1; xx < x + w - 1; xx += 2)
-        if (r() < 0.5) {
+        if (r() < 0.55) {
           b.wins.push({ x: xx, y: yy });
-          light({ type: 'cwin', x: xx, y: yy, c: r() < 0.7 ? '#7fe9ff' : pick(r, ['#ff8fe6', '#ffd27f']) });
+          light({ type: 'cwin', x: xx, y: yy, h: 2, c: r() < 0.85 ? tint : '#ffd27f' });
         }
     light({ type: 'neon', x, y: fy, w, h: 1, c: pick(r, NEONS) });
     return b;
@@ -316,9 +397,9 @@ export function generateWorld(canvas) {
     const b = { x, y, w, d: w, h, style, roof: pick(r, ROOFS) };
     const fy = y + w - h;
     if (style === 'cyber') {
-      light({ type: 'beacon', x: x + (w >> 1), y: y - h - 6, c: '#ff3b4a' });
+      light({ type: 'beacon', x: x + (w >> 1), y: y - h - 8, c: '#ff3b4a' });
       light({ type: 'neon', x: x + (w >> 1), y: fy + 2, w: 1, h: h - 3, c: pick(r, NEONS) });
-    } else if (r() < 0.5) light({ type: 'win', x: x + (w >> 1), y: fy + 4, h: 2, c: WARM });
+    } else if (r() < 0.6) light({ type: 'win', x: x + (w >> 1), y: fy + 4, h: 3, c: r() < 0.7 ? WARM : '#bfefff' });
     return b;
   };
 
@@ -358,10 +439,10 @@ export function generateWorld(canvas) {
             objs.push({ k: ly + 19, f: c => { drawCyber(c, base); drawCyber(c, mid); drawCyber(c, top); } });
           } else {
             const spire = addTower(r, lx + 13, ly + 1, 6, 26 + Math.floor(r() * 10), 'stone');
-            spire.roof = ROOFS[3];
-            const hall = addHouse(r, lx + 1, ly + 6, 16, 12, 11 + Math.floor(r() * 3), ['#b4ab97', '#857d6c'], ROOFS[3]);
-            hall.timber = false;
-            light({ type: 'win', x: lx + 8, y: hall.y + hall.d - hall.h + 3, w: 2, h: 2, c: '#ffb36b' });
+            spire.roof = ROOFS[0];
+            const hall = addHouse(r, lx + 1, ly + 6, 16, 12, 11 + Math.floor(r() * 3), ['#a9a7b6', '#73717f'], ROOFS[0]);
+            light({ type: 'win', x: lx + 7, y: hall.y + hall.d - hall.h + 2, w: 2, h: 3, c: '#ffb36b' });
+            if (b === 'city') light({ type: 'neon', x: lx + 1, y: hall.y + hall.d - 1, w: 16, h: 1, c: pick(r, NEONS) });
             shadowBox(lx + 1, ly + 1, 18, 17, 30);
             objs.push({ k: ly + 18, f: c => { drawTower(c, spire); drawHouse(c, hall); } });
           }
@@ -371,7 +452,7 @@ export function generateWorld(canvas) {
       if (!landOK(lx + 5, ly + 5, 0.1)) continue;
       const lot = j * 4 + i;
       if (lot === barn) {
-        const hb = addHouse(r, lx + 1, ly + 2, 9, 7, 6, ['#8b4a36', '#663426'], ROOFS[2]);
+        const hb = addHouse(r, lx + 1, ly + 2, 9, 7, 6, ['#7a5a4c', '#57402f'], ROOFS[3]);
         shadowBox(hb.x, hb.y, hb.w, hb.d, hb.h);
         objs.push({ k: hb.y + hb.d, f: c => drawHouse(c, hb) });
         continue;
@@ -389,7 +470,7 @@ export function generateWorld(canvas) {
         if (kind === 'house') {
           const w = 7 + Math.floor(r() * 3), d = 6 + Math.floor(r() * 3);
           const h = b === 'town' ? 5 + Math.floor(r() * 3) : 6 + Math.floor(r() * 6);
-          const hb = addHouse(r, lx + ((10 - w) >> 1), ly + 1 + ((9 - d) >> 1), w, d, h);
+          const hb = addHouse(r, lx + ((10 - w) >> 1), ly + 1 + ((9 - d) >> 1), w, d, h, null, null, b === 'city' ? 0.3 : b === 'cyber' ? 0.6 : 0.04);
           shadowBox(hb.x, hb.y, w, d, h);
           objs.push({ k: hb.y + d, f: c => drawHouse(c, hb) });
         } else if (kind === 'cyber') {
@@ -425,9 +506,14 @@ export function generateWorld(canvas) {
   for (let x = 0; x < N; x++) {
     for (const side of ['top', 'bottom']) {
       const px = x * C + 32, py = side === 'top' ? 16 : (N - 1) * C + 46;
-      const accent = side === 'top' ? '#ffd27a' : '#c79bff';
+      const accent = side === 'top' ? '#bfe9ff' : '#c79bff';
       pads.push({ x: px, y: py, side, col: x });
       decals.push(c => drawPad(c, px, py, accent, side));
+      // 네 방위 작은 첨탑과 관제탑은 세워진 물체라 깊이 정렬에 넣는다
+      for (const [dx, dy] of [[0, -11], [-11, 0], [11, 0], [0, 11]]) objs.push({ k: py + dy, f: c => { R(c, px + dx, py + dy - 4, 1, 4, '#a6a4b3'); R(c, px + dx, py + dy - 5, 1, 1, '#d2d0dc'); } });
+      objs.push({ k: py - 7, f: c => drawGantry(c, px + 10, py - 7) });
+      light({ type: 'win', x: px + 11, y: py - 17, w: 2, h: 4, c: accent });
+      light({ type: 'beacon', x: px + 11, y: py - 31, c: side === 'top' ? '#bfe9ff' : '#c79bff' });
       for (let k = 0; k < 8; k++) {
         const a = (k / 8) * Math.PI * 2;
         light({ type: 'pad', k, x: Math.round(px + Math.cos(a) * 9.5), y: Math.round(py + Math.sin(a) * 9.5), c: accent });
@@ -445,7 +531,9 @@ export function generateWorld(canvas) {
     const x0 = x * C, y0 = y * C;
     shadows.push(c => R(c, x0, y0 + 2, C, 2, SHADOW));
     objs.push({ k: y0 + 2, f: c => hWall(c, x0, y0, gate, neon) });
-    if (neon) light({ type: 'wallneon', x: x0, y: y0 - 1, w: C, h: 1, c: '#3ff0ff' });
+    if (neon) light({ type: 'wallneon', x: x0, y: y0 + 1, w: C, h: 1, c: '#3ff0ff' });
+    for (let i = 4; i < C; i += 8) if (wr() < (neon ? 0.55 : 0.22)) light({ type: 'win', x: x0 + i, y: y0 + 4 - WH, h: 3, c: neon ? '#7fe9ff' : '#ffb36b' });
+    if (gate) light({ type: 'win', x: x0 + C / 2 - 1, y: y0 - WH - 3, w: 2, h: 1, c: neon ? '#7fe9ff' : '#ffe2a8' });
     if (gate && (isSettled(a) || isSettled(bb))) {
       light({ type: 'torch', x: x0 + 25, y: y0 - 3, c: '#ff9a3a' });
       light({ type: 'torch', x: x0 + 38, y: y0 - 3, c: '#ff9a3a' });
@@ -465,7 +553,8 @@ export function generateWorld(canvas) {
     for (const [dx, dy] of [[-1, -1], [0, -1], [-1, 0], [0, 0]]) if (cells[y + dy]?.[x + dx]?.b === 'cyber') cyber = true;
     const x0 = x * C, y0 = y * C;
     objs.push({ k: y0 + 3, f: c => wallTower(c, x0, y0, cyber) });
-    if (cyber && wr() < 0.6) light({ type: 'beacon', x: x0, y: y0 - WH - 7, c: '#ff3b4a' });
+    if (cyber && wr() < 0.6) light({ type: 'beacon', x: x0 - 1, y: y0 - 2 - WH - 7 - 8, c: '#ff3b4a' });
+    else if (wr() < 0.35) light({ type: 'win', x: x0 - 1, y: y0 - 2 - WH - 7 + 3 + 4, h: 3, c: cyber ? '#7fe9ff' : '#ffb36b' });
   }
 
   ctx.save();

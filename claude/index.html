@@ -10,10 +10,11 @@
 <body>
   <!-- 부팅 화면 -->
   <div id="boot">
+    <canvas id="boot-nave" aria-hidden="true"></canvas>
     <div class="boot-inner">
-      <div class="boot-cube" aria-hidden="true"><div class="cube"><i class="f1"></i><i class="f2"></i><i class="f3"></i></div></div>
-      <p class="over">PLANET CB-120 · SURFACE OBSERVATION</p>
+      <p class="over"><span>◆</span> PLANET CB-120 · SURFACE OBSERVATION <span>◆</span></p>
       <h1>CB-120</h1>
+      <div class="boot-rule" aria-hidden="true"><i></i><b>✠</b><i></i></div>
       <p class="sub">체시언의 세계를 관측하고, 원하는 구역으로 이동을 신청하십시오.</p>
       <div class="boot-track"><i id="boot-bar"></i></div>
       <p class="boot-status" id="boot-status">지표 데이터 수신 중…</p>
@@ -46,9 +47,12 @@
     </div>
 
     <header class="brand">
-      <span class="over">CB-120 · WORLD EXPLORATION</span>
-      <h1>행성 표면 관측</h1>
-      <p>20 × 20 구역 · 테스트 지형</p>
+      <i class="brand-emblem" aria-hidden="true"></i>
+      <div class="brand-text">
+        <span class="over">◆ CB-120 · WORLD EXPLORATION</span>
+        <h1>행성 표면 관측</h1>
+        <p>20 × 20 구역 · 테스트 지형</p>
+      </div>
     </header>
 
     <div class="top-right">
@@ -130,11 +134,16 @@
   <section id="inspection" hidden aria-label="이동관리국 통행 심사">
     <div class="insp-inner">
       <div class="room" aria-hidden="true">
+        <canvas id="hall-nave"></canvas>
         <div class="wall"></div>
+        <div class="arches"><i></i><i></i><i></i><i></i></div>
+        <div class="glass-spill"></div>
         <div class="lamps"><i></i><i></i><i></i></div>
         <div class="sign"><b>이동관리국</b><span>MOVEMENT AUTHORITY · CHECKPOINT 01</span></div>
         <div class="beacon"></div>
+        <canvas id="hall-lanterns"></canvas>
         <div class="queue"><span>NOW SERVING</span><b id="queue-no">042</b></div>
+        <div class="booth-frame"></div>
         <div class="booth">
           <div class="booth-light"></div>
           <canvas id="officer"></canvas>

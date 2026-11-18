@@ -45,8 +45,6 @@ kbd { font: inherit; font-size: 11px; padding: 1px 5px; margin-right: 3px; borde
 .chip::-webkit-details-marker { display: none; }
 .btn { border: 0; padding: 12px 16px; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: transform .06s, box-shadow .06s; }
 .btn kbd { background: rgba(0,0,0,.18); border-color: rgba(0,0,0,.35); color: inherit; }
-.btn.primary { background: var(--amber); color: #1b1305; box-shadow: inset 0 -3px 0 rgba(0,0,0,.18), 0 4px 0 var(--amber-deep), 0 0 0 2px #1b1305; }
-.btn.primary:hover { background: #ffd067; }
 .btn.ghost { background: #121821; color: #cdd6d8; box-shadow: inset 0 0 0 2px #344050, 0 4px 0 #05070a; }
 .btn.ghost:hover { background: #18202b; }
 .btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 var(--amber-deep), 0 0 0 2px #1b1305; }
@@ -67,10 +65,7 @@ kbd { font: inherit; font-size: 11px; padding: 1px 5px; margin-right: 3px; borde
 .boot-track { height: 10px; border: 2px solid var(--line-hi); padding: 2px; background: #05070a; }
 .boot-track i { display: block; height: 100%; width: 4%; background: repeating-linear-gradient(90deg, var(--cyan) 0 8px, transparent 8px 10px); transition: width .5s steps(8); }
 .boot-status { color: var(--dim); font-size: 14px; min-height: 1.4em; }
-#boot-start { margin-top: 10px; padding: 14px 34px; font-size: 20px; border: 0; background: var(--amber); color: #1b1305; box-shadow: 0 5px 0 var(--amber-deep), 0 0 0 2px #1b1305, 0 0 40px rgba(242,193,78,.35); animation: breathe 1.6s ease-in-out infinite; }
-#boot-start:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--amber-deep), 0 0 0 2px #1b1305; }
 .boot-note { margin-top: 34px; color: #5d6876; font-size: 12px; }
-@keyframes breathe { 50% { box-shadow: 0 5px 0 var(--amber-deep), 0 0 0 2px #1b1305, 0 0 60px rgba(242,193,78,.6); } }
 
 .boot-cube { height: 120px; display: grid; place-items: center; perspective: 600px; }
 .cube { position: relative; width: 70px; height: 70px; transform-style: preserve-3d; animation: spin 9s linear infinite; }
@@ -242,6 +237,144 @@ kbd { font: inherit; font-size: 11px; padding: 1px 5px; margin-right: 3px; borde
 
 #explore[inert] .hover-info, #explore[inert] .dock { opacity: 0; }
 
+/* ---------- HUD 고딕 스킨 ----------
+   돌판 같은 패널, 가는 장식선(트레이서리), 위쪽 뾰족 아치 장식, 절제된 네온 한 줄.
+   HUD라서 글로우는 최소로만 쓴다. */
+:root {
+  --stone: rgba(28, 26, 38, .93);
+  --stone-deep: rgba(12, 11, 18, .93);
+  --stone-edge: #3d3b4a;
+  --tracery: #8b8998;
+  --tracery-dim: #5c5a6b;
+  --neon: #7fe9ff;
+  --neon-soft: rgba(127, 233, 255, .16);
+  --rose: #c79bff;
+  --label: #9ad6e4;
+}
+.panel {
+  background:
+    linear-gradient(var(--tracery-dim), var(--tracery-dim)) top 5px left 5px / 9px 1px no-repeat,
+    linear-gradient(var(--tracery-dim), var(--tracery-dim)) top 5px left 5px / 1px 9px no-repeat,
+    linear-gradient(var(--tracery-dim), var(--tracery-dim)) top 5px right 5px / 9px 1px no-repeat,
+    linear-gradient(var(--tracery-dim), var(--tracery-dim)) top 5px right 5px / 1px 9px no-repeat,
+    linear-gradient(var(--tracery-dim), var(--tracery-dim)) bottom 5px left 5px / 9px 1px no-repeat,
+    linear-gradient(var(--tracery-dim), var(--tracery-dim)) bottom 5px left 5px / 1px 9px no-repeat,
+    linear-gradient(var(--tracery-dim), var(--tracery-dim)) bottom 5px right 5px / 9px 1px no-repeat,
+    linear-gradient(var(--tracery-dim), var(--tracery-dim)) bottom 5px right 5px / 1px 9px no-repeat,
+    linear-gradient(180deg, var(--stone), var(--stone-deep));
+  border: 2px solid var(--stone-edge);
+  box-shadow: 0 0 0 2px #05040a, inset 0 0 0 1px rgba(139, 137, 152, .12), 0 14px 34px rgba(0, 0, 0, .55);
+}
+/* 위쪽 가운데 뾰족 아치 장식 */
+.panel::before {
+  content: ''; position: absolute; left: 50%; top: -11px; width: 34px; height: 10px; transform: translateX(-50%);
+  background: var(--stone-edge); clip-path: polygon(0 100%, 50% 0, 100% 100%);
+  pointer-events: none;
+}
+.panel::after {
+  content: ''; position: absolute; left: 50%; top: -6px; width: 4px; height: 4px; margin-left: -2px; transform: rotate(45deg);
+  background: var(--neon); box-shadow: 0 0 6px var(--neon-soft); opacity: .8; pointer-events: none;
+}
+/* 위 가장자리 네온 한 줄 */
+.card, .mini, .dock, .hover-info, .settings-panel { box-shadow: 0 0 0 2px #05040a, inset 0 1px 0 rgba(127, 233, 255, .3), inset 0 0 0 1px rgba(139, 137, 152, .12), 0 14px 34px rgba(0, 0, 0, .55); }
+.dock { border-color: #3f5562; box-shadow: 0 0 0 2px #05040a, inset 0 1px 0 rgba(127, 233, 255, .45), inset 0 0 0 1px rgba(139, 137, 152, .12), 0 0 18px rgba(127, 233, 255, .08), 0 14px 34px rgba(0, 0, 0, .55); }
+.settings-panel::before, .settings-panel::after { display: none; }
+
+.card-head, .mini-head { color: var(--tracery); border-bottom: 1px solid var(--stone-edge); box-shadow: 0 1px 0 #05040a; padding-bottom: 7px; }
+.card-head span:first-child::before, .mini-head span:first-child::before { content: '◆ '; color: var(--rose); opacity: .7; font-size: 9px; }
+.me-info label, .me-info .label, .settings-panel label, .dock-head { color: var(--label); }
+.portrait-frame {
+  background: radial-gradient(ellipse at 50% 85%, rgba(127, 233, 255, .1), transparent 70%), repeating-linear-gradient(0deg, #100f18 0 2px, #14131d 2px 4px);
+  border: 2px solid var(--tracery-dim); box-shadow: inset 0 0 0 2px #05040a;
+  border-radius: 46px 46px 0 0 / 30px 30px 0 0; /* 첨두창 같은 아치 프레임 */
+}
+#status { background: #0b0a12; border-left: 3px solid var(--tracery-dim); box-shadow: inset 0 0 0 1px rgba(139, 137, 152, .1); }
+.steps li { border-left: 3px solid transparent; }
+.steps li.active { color: var(--amber); background: linear-gradient(90deg, rgba(242, 193, 78, .16), transparent 80%); border-left-color: var(--amber); }
+.hover-main strong { color: var(--amber); }
+.dock-route i { color: var(--neon); }
+
+/* 버튼·칩: 모서리를 깎은 돌판, 그림자는 안쪽으로 */
+.chip, .btn {
+  clip-path: polygon(5px 0, calc(100% - 5px) 0, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 0 calc(100% - 5px), 0 5px);
+}
+.chip {
+  border: 0; background: linear-gradient(180deg, #2a2836, #1a1922);
+  box-shadow: inset 0 0 0 2px var(--stone-edge), inset 0 -3px 0 #0d0c14;
+}
+.chip:hover { color: #fff; box-shadow: inset 0 0 0 2px var(--tracery-dim), inset 0 1px 0 rgba(127, 233, 255, .5), inset 0 -3px 0 #0d0c14; }
+.chip:active { transform: translateY(1px); box-shadow: inset 0 0 0 2px var(--tracery-dim), inset 0 -1px 0 #0d0c14; }
+.btn.ghost { background: linear-gradient(180deg, #2a2836, #1a1922); color: #d4d2de; box-shadow: inset 0 0 0 2px var(--stone-edge), inset 0 -4px 0 #0d0c14; }
+.btn.ghost:hover { background: linear-gradient(180deg, #312f3f, #1f1e29); box-shadow: inset 0 0 0 2px var(--tracery-dim), inset 0 1px 0 rgba(127, 233, 255, .45), inset 0 -4px 0 #0d0c14; }
+.btn:active:not(:disabled) { transform: translateY(2px); }
+.btn.ghost:active:not(:disabled) { box-shadow: inset 0 0 0 2px var(--tracery-dim), inset 0 -1px 0 #0d0c14; }
+kbd { background: #14131d; border-color: var(--tracery-dim); }
+.settings-panel select, .me-info select { background: #100f18; border: 2px solid var(--stone-edge); }
+
+#minimap { border: 2px solid var(--tracery-dim); box-shadow: 0 0 0 2px #05040a; }
+
+.brand .over { color: var(--label); }
+.brand h1 { text-shadow: 0 2px 0 #000, 0 0 12px rgba(127, 233, 255, .18); }
+
+/* ---------- 좌상단 타이틀: 첨두창 문장 + 각인된 제목 ---------- */
+.brand { display: flex; gap: 14px; align-items: flex-start; }
+.brand-emblem {
+  flex: none; position: relative; width: 38px; height: 58px; margin-top: 2px;
+  clip-path: polygon(0 100%, 0 30%, 10% 15%, 26% 5%, 50% 0, 74% 5%, 90% 15%, 100% 30%, 100% 100%);
+  background: linear-gradient(180deg, #8b8998, #4d4b5a);
+}
+.brand-emblem::before {
+  content: ''; position: absolute; inset: 4px 4px 4px;
+  clip-path: polygon(0 100%, 0 30%, 10% 15%, 26% 5%, 50% 0, 74% 5%, 90% 15%, 100% 30%, 100% 100%);
+  background:
+    radial-gradient(circle at 50% 24%, #7fe9ff 0 3px, #14131b 3px 4.5px, transparent 4.5px),
+    conic-gradient(#d8d2c0 0 25%, #1c1b26 0 50%, #d8d2c0 0 75%, #1c1b26 0) 0 100% / 10px 10px,
+    #14131b;
+}
+.brand-emblem::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: #7fe9ff; opacity: .55; }
+.brand .over { color: var(--label); letter-spacing: .24em; }
+.brand h1 { color: #f0e2bd; letter-spacing: .06em; text-shadow: 0 2px 0 #05040a, 0 -1px 0 rgba(255,255,255,.15), 0 0 10px rgba(255,210,140,.12); }
+.brand h1::after { content: ''; display: block; height: 7px; margin-top: 5px; width: 230px;
+  background:
+    linear-gradient(90deg, transparent, #8b8998 12%, #8b8998 44%, transparent 44% 56%, #8b8998 56%, #8b8998 88%, transparent) 0 3px / 100% 1px no-repeat,
+    linear-gradient(45deg, transparent 35%, #c79bff 35% 65%, transparent 65%) 50% 0 / 7px 7px no-repeat;
+}
+.brand p { color: #8b8998; }
+
+/* ---------- 로딩 화면: 고딕 관측 성당 ----------
+   장면은 js/nave.js가 도트로 그린다(스테인드글라스, 빛줄기, 촛불, 원창 너머 정육면체 행성). 글씨는 통로 위에 얹는다. */
+#boot { background: #05040a; overflow: hidden; align-items: end; }
+#boot-nave { position: absolute; left: 0; top: 0; image-rendering: pixelated; pointer-events: none; }
+#boot::before { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 52vh; pointer-events: none; z-index: 1;
+  background: radial-gradient(ellipse 46% 78% at 50% 100%, rgba(5,4,10,.82), rgba(5,4,10,.45) 62%, transparent 100%); }
+#boot .boot-inner { z-index: 2; padding-bottom: 5.5vh; }
+#boot .boot-inner .over { margin: 0 0 2px; font-size: 11px; }
+#boot .boot-inner h1 { font-size: clamp(48px, 6.4vh, 76px); line-height: 1; }
+#boot .boot-inner .sub { margin: 6px 0 12px; font-size: 14px; }
+#boot .boot-status { margin: 6px 0 0; }
+#boot #boot-start { margin-top: 6px; }
+#boot .boot-note { position: fixed; left: 0; right: 0; bottom: 1.4vh; margin: 0; font-size: 11px; }
+.boot-inner .over { color: #9ad6e4; }
+.boot-inner .over span { color: #c79bff; opacity: .7; font-size: 10px; }
+.boot-inner h1 { color: #f0e2bd; text-shadow: 0 4px 0 #05040a, 0 -2px 0 rgba(255,255,255,.12), 0 0 18px rgba(255,210,140,.14); }
+.boot-rule { display: flex; align-items: center; gap: 12px; width: 300px; margin: 6px auto 0; color: #c79bff; }
+.boot-rule i { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, #8b8998); }
+.boot-rule i:last-child { background: linear-gradient(90deg, #8b8998, transparent); }
+.boot-rule b { font-weight: 400; font-size: 14px; opacity: .8; }
+.boot-inner .sub { color: #b4b2c0; }
+/* 진행 막대: 석조 띠 안에 첨두 슬릿이 하나씩 켜진다 */
+.boot-track { height: 18px; padding: 3px; border: 2px solid #3d3b4a; background: #0b0a10; box-shadow: 0 0 0 2px #05040a, inset 0 1px 0 rgba(127,233,255,.2); position: relative; }
+.boot-track::before, .boot-track::after { content: '◆'; position: absolute; top: 50%; transform: translateY(-50%); color: #8b8998; font-size: 10px; }
+.boot-track::before { left: -16px; }
+.boot-track::after { right: -16px; }
+.boot-track i { background:
+  linear-gradient(180deg, transparent 0 2px, transparent 2px) ,
+  repeating-linear-gradient(90deg, #7fe9ff 0 6px, transparent 6px 9px);
+  -webkit-mask: repeating-linear-gradient(90deg, #000 0 6px, transparent 6px 9px); }
+.boot-status { color: #8b8998; }
+#boot::after { background: repeating-linear-gradient(0deg, rgba(0,0,0,.14) 0 1px, transparent 1px 3px); }
+.boot-note { color: #4d4b5a; }
+
 /* ---------- 타일 전환 ---------- */
 #tiles { position: fixed; inset: 0; z-index: 60; display: grid; pointer-events: all; }
 #tiles .t { display: block; transform: scale(0); }
@@ -293,8 +426,67 @@ kbd { font: inherit; font-size: 11px; padding: 1px 5px; margin-right: 3px; borde
 .ship { position: absolute; left: 0; top: 0; transform-style: preserve-3d; transition: opacity .2s; }
 .ship .shadow { position: absolute; left: -14px; top: -6px; width: 28px; height: 12px; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.55), transparent); }
 .ship.flying .shadow { opacity: 0; }
-.ship .stand { position: absolute; left: 0; top: 0; width: 40px; height: 73px; transform-origin: 0 0; transform: rotateX(calc(var(--tilt) * -1)) translate(-50%, -100%); }
+.ship .stand { position: absolute; left: 0; top: 0; width: 42px; height: 90px; transform-origin: 0 0; transform: rotateX(calc(var(--tilt) * -1)) translate(-50%, -84%); }
 .ship img { display: block; width: 100%; height: 100%; image-rendering: pixelated; transform: rotate(var(--lean, 0deg)); }
-.ship.flying img { filter: drop-shadow(0 0 6px rgba(255,200,120,.9)) drop-shadow(0 14px 12px rgba(255,150,60,.8)); }
-.ship .stand::after { content: ''; position: absolute; left: 50%; top: 80%; width: 10px; margin-left: -5px; height: 0; background: linear-gradient(to bottom, rgba(255,230,160,.95), rgba(255,140,60,.5) 40%, transparent); filter: blur(1.5px); transition: height .4s; }
+.ship.flying img { filter: drop-shadow(0 0 6px rgba(170,230,255,.85)) drop-shadow(0 14px 12px rgba(80,150,255,.8)); }
+.ship .stand::after { content: ''; position: absolute; left: 50%; top: 84%; width: 10px; margin-left: -5px; height: 0; background: linear-gradient(to bottom, rgba(225,250,255,.95), rgba(80,150,255,.5) 40%, transparent); filter: blur(1.5px); transition: height .4s; }
 .ship.flying .stand::after { height: 110px; }
+
+/* ---------- 결정 버튼: 돌 틀에 끼운 스테인드글라스 인장 ----------
+   노란 버튼 대신 첨두 끝을 가진 유리판. 보랏빛 유리 + 옅은 납선 마름모,
+   테두리는 돌(트레이서리) 색. 가끔 은은한 빛이 유리를 천천히 지나간다.
+   모양은 ::before에 잘라 두고 테두리는 drop-shadow로 모양을 따라 그린다. */
+.btn.primary, .btn.primary:hover, #boot-start, #boot-start:hover {
+  position: relative; isolation: isolate; border: 0; clip-path: none;
+  background: none; box-shadow: none; animation: none;
+}
+.btn.primary, #boot-start {
+  color: #f1eefa; letter-spacing: .04em; text-shadow: 0 1px 0 #12062a;
+  filter:
+    drop-shadow(2px 0 0 var(--tracery)) drop-shadow(-2px 0 0 var(--tracery))
+    drop-shadow(0 2px 0 var(--tracery)) drop-shadow(0 -2px 0 var(--tracery))
+    drop-shadow(2px 0 0 #07050d) drop-shadow(-2px 0 0 #07050d)
+    drop-shadow(0 2px 0 #07050d) drop-shadow(0 -2px 0 #07050d)
+    drop-shadow(0 0 8px rgba(120, 80, 220, .3));
+}
+.btn.primary::before, .btn.primary::after, #boot-start::before, #boot-start::after {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  clip-path: polygon(14px 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 14px 100%, 0 50%);
+}
+.btn.primary::before, #boot-start::before {
+  background:
+    linear-gradient(180deg, rgba(230, 220, 255, .22) 0 2px, transparent 2px calc(100% - 3px), rgba(8, 4, 20, .6) calc(100% - 3px)),
+    repeating-linear-gradient(58deg, transparent 0 15px, rgba(12, 6, 26, .32) 15px 17px),
+    repeating-linear-gradient(-58deg, transparent 0 15px, rgba(12, 6, 26, .32) 15px 17px),
+    radial-gradient(ellipse 60% 90% at 50% 115%, rgba(200, 70, 170, .3), transparent 70%),
+    linear-gradient(180deg, #3e2382, #251454 60%, #1b0f40);
+}
+/* 가끔 유리를 천천히 지나가는 은은한 빛 */
+.btn.primary::after, #boot-start::after {
+  mix-blend-mode: screen;
+  background: linear-gradient(105deg, transparent 40%, rgba(200, 185, 255, .18) 46%, rgba(240, 232, 255, .42) 50%, rgba(200, 185, 255, .18) 54%, transparent 60%) no-repeat;
+  background-size: 260% 100%; background-position: 160% 0;
+  animation: sigil-sweep 9s ease-in-out infinite;
+}
+.btn.primary { padding: 12px 26px; }
+.btn.primary kbd { background: rgba(10, 5, 26, .6); border-color: var(--tracery-dim); color: #d8d4e6; text-shadow: none; }
+.btn.primary:hover, #boot-start:hover {
+  color: #fff;
+  filter:
+    drop-shadow(2px 0 0 #b9b6c8) drop-shadow(-2px 0 0 #b9b6c8)
+    drop-shadow(0 2px 0 #b9b6c8) drop-shadow(0 -2px 0 #b9b6c8)
+    drop-shadow(2px 0 0 #07050d) drop-shadow(-2px 0 0 #07050d)
+    drop-shadow(0 2px 0 #07050d) drop-shadow(0 -2px 0 #07050d)
+    drop-shadow(0 0 10px rgba(140, 100, 240, .4));
+}
+.btn.primary:hover::before, #boot-start:hover::before { filter: brightness(1.22); }
+.btn.primary:active:not(:disabled), #boot-start:active { transform: translateY(2px); box-shadow: none; }
+.btn.primary:active::before, #boot-start:active::before { filter: brightness(1.4); }
+.btn.primary:disabled { opacity: .45; filter: drop-shadow(2px 0 0 var(--tracery-dim)) drop-shadow(-2px 0 0 var(--tracery-dim)) drop-shadow(0 2px 0 var(--tracery-dim)) drop-shadow(0 -2px 0 var(--tracery-dim)) grayscale(.8); }
+.btn.primary:disabled::after { animation: none; opacity: 0; }
+#boot-start { padding: 15px 46px; font-size: 21px; margin-top: 12px; }
+#boot-start::before, #boot-start::after { clip-path: polygon(18px 0, calc(100% - 18px) 0, 100% 50%, calc(100% - 18px) 100%, 18px 100%, 0 50%); }
+/* 시작 버튼은 스크립트가 포커스를 주므로 네모난 포커스 테두리를 없앤다 */
+.btn.primary:focus, #boot-start:focus { outline: none; }
+@keyframes sigil-sweep { 0%, 70% { background-position: 160% 0; } 100% { background-position: -60% 0; } }
+@media (prefers-reduced-motion: reduce) { .btn.primary::after, #boot-start::after { animation: none; } }

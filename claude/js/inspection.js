@@ -3,6 +3,8 @@
 import { canMove, RANK_KO, RANK_EN, RULE_TEXT } from './rules.js';
 import { drawChecian } from './sprites.js';
 import { N } from './world.js';
+import { createNave } from './nave.js';
+import { createLanterns } from './lanterns.js';
 
 const coord = p => `(${p.x + 1}, ${p.y + 1})`;
 const vec = (a, b) => {
@@ -21,6 +23,9 @@ export function createInspection({ sfx }) {
   const lineEl = $('#officer-line'), state = $('#screen-state'), verdictEl = $('#screen-verdict');
   const banner = $('#banner'), inner = $('.insp-inner');
   drawChecian($('#officer'), 'rook', 'black');
+  // 홀 배경: 평소엔 하늘인 척하는 스테인드글라스, 판정에 따라 초록/빨강으로 켜진다
+  const hallState = () => root.classList.contains('denied') ? 'denied' : root.classList.contains('approved') ? 'approved' : root.classList.contains('scanning') ? 'scanning' : 'idle';
+  let hall = null, lanterns = null;
 
   let req = null, resolve = null, busy = false, stream = null, camReq = 0, timers = [], typing = null;
   const later = (fn, ms) => timers.push(setTimeout(fn, ms));
@@ -105,6 +110,8 @@ export function createInspection({ sfx }) {
     checkBtn.disabled = true;
     cancelBtn.disabled = true;
     root.hidden = false;
+    if (!hall) { hall = createNave($('#hall-nave'), { scene: 'hall', getState: hallState }); lanterns = createLanterns($('#hall-lanterns'), hallState); }
+    else { hall.start(); lanterns.start(); }
   }
 
   function enter() {
@@ -170,6 +177,8 @@ export function createInspection({ sfx }) {
 
   function hide() {
     root.hidden = true;
+    hall?.stop();
+    lanterns?.stop();
     root.classList.remove('scanning', 'approved', 'denied', 'done');
     inner.classList.remove('shake');
   }
