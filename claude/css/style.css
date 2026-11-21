@@ -142,6 +142,8 @@ kbd { font: inherit; font-size: 11px; padding: 1px 5px; margin-right: 3px; borde
 /* 폰(34×32 도트): 같은 배율 */
 .piece.rank-pawn .stand { width: 82px; height: 77px; }
 .me.rank-pawn .stand { width: 102px; height: 96px; }
+.piece.rank-knight .stand { width: 82px; height: 77px; }
+.me.rank-knight .stand { width: 102px; height: 96px; }
 .me .stand::before { content: ''; position: absolute; inset: -10px -14px 0; background: radial-gradient(ellipse at 50% 70%, rgba(242,193,78,.25), transparent 65%); opacity: 0; transition: opacity .2s; }
 .me.selected .stand::before { opacity: 1; }
 .me img { filter: drop-shadow(0 0 0 #000) drop-shadow(2px 0 0 #f2c14e) drop-shadow(-2px 0 0 #f2c14e) drop-shadow(0 -2px 0 #f2c14e); }
