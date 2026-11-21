@@ -14,8 +14,11 @@ function rgb(hex) {
 }
 
 // 완성된 도트 PNG가 있는 계급은 코드 마커 대신 그 그림을 쓴다
-const PNG = { rook: c => new URL(`../assets/sprites/rook/rook_map_${c}.png`, import.meta.url).href };
-export const PNG_SIZE = { rook: [30, 32] };
+const PNG = {
+  rook: c => new URL(`../assets/sprites/rook/rook_map_${c}.png`, import.meta.url).href,
+  pawn: c => new URL(`../assets/sprites/pawn/pawn_map_${c}.png`, import.meta.url).href,
+};
+export const PNG_SIZE = { rook: [30, 32], pawn: [34, 32] };
 
 export function drawChecian(canvas, rank, color = 'white') {
   if (PNG[rank]) {
