@@ -39,8 +39,7 @@
   box-shadow: inset 0 0 0 3px #26323a, 0 30px 80px rgba(0,0,0,.65);
 }
 .booth-light { position: absolute; inset: 0; background: radial-gradient(ellipse 40% 60% at 50% 70%, rgba(80,170,160,.28), transparent 70%); }
-#officer { position: absolute; left: 50%; bottom: -14%; height: 122%; transform: translateX(-50%); image-rendering: pixelated; filter: brightness(.42) saturate(.55) contrast(1.15); animation: breatheOfficer 4s ease-in-out infinite; }
-@keyframes breatheOfficer { 50% { transform: translateX(-50%) translateY(-1.2%); } }
+#officer { position: absolute; left: 0; top: 0; image-rendering: pixelated; filter: brightness(.86) contrast(1.05); }
 .glass { position: absolute; inset: 0; background: linear-gradient(115deg, transparent 16%, rgba(255,255,255,.09) 18%, transparent 25%, transparent 58%, rgba(255,255,255,.05) 60%, transparent 64%), linear-gradient(rgba(70,140,150,.1), rgba(15,35,40,.3)); }
 .grille { position: absolute; left: 50%; bottom: 10px; width: 130px; height: 28px; transform: translateX(-50%); background: repeating-linear-gradient(90deg, #0b1012 0 4px, #2a353a 4px 7px); border: 3px solid #2a353a; }
 .booth-tag { position: absolute; left: 10px; top: 8px; font-size: 10px; letter-spacing: .14em; color: #4c6a6a; }
@@ -235,7 +234,7 @@
   clip-path: polygon(0 100%, 0 36%, 5% 22%, 14% 11%, 28% 4%, 50% 0, 72% 4%, 86% 11%, 95% 22%, 100% 36%, 100% 100%); }
 .booth-light { background: radial-gradient(ellipse 40% 60% at 50% 70%, rgba(110,170,200,.22), transparent 70%); }
 .grille { background: repeating-linear-gradient(90deg, #0b0a10 0 4px, #3d3b4a 4px 7px); border-color: #3d3b4a; }
-.booth-tag { left: 50%; top: 14%; transform: translateX(-50%); color: #5c5a6b; }
+.booth-tag { left: auto; right: 9%; top: auto; bottom: 46px; transform: none; color: #5c5a6b; z-index: 2; }
 
 .officer-line { background: linear-gradient(180deg, rgba(28,26,38,.95), rgba(12,11,18,.95)); border: 2px solid #3d3b4a; box-shadow: 0 0 0 2px #05040a, inset 0 1px 0 rgba(127,233,255,.3); }
 .officer-line span { color: #9ad6e4; }
@@ -470,3 +469,24 @@
 #hall-nave { position: absolute; left: 0; top: 0; image-rendering: pixelated; pointer-events: none; }
 #inspection .wall, #inspection .arches, #inspection .glass-spill, #inspection .lamps { display: none; }
 #hall-lanterns { position: absolute; left: 0; top: 0; image-rendering: pixelated; pointer-events: none; }
+
+/* ---------- 도트 창구 (js/booth.js) ----------
+   CSS로 그리던 테두리·유리·조명·구멍은 끄고, 심사관과 같은 픽셀 격자의 캔버스로 그린다. */
+.booth { background: #07060b; }
+.booth-frame, .booth-light, .glass, .grille { display: none; }
+#booth-back { position: absolute; left: 0; top: 0; image-rendering: pixelated; }
+#booth-art { position: absolute; pointer-events: none; image-rendering: pixelated; filter: drop-shadow(0 24px 40px rgba(0,0,0,.6)); }
+.booth-tag { display: none; }   /* 심사관이 정식 도트가 되어 '시안' 표시는 뺀다 */
+/* 심사대 난간도 도트 캔버스로 (js/booth.js createCounter) */
+#counter-art { position: absolute; left: 0; top: 0; image-rendering: pixelated; }
+.counter { overflow: hidden; }
+.counter-top, .counter-front { position: relative; background: none !important; box-shadow: none !important; }
+.counter-top { box-shadow: 0 6px 14px rgba(0,0,0,.6) !important; }
+.counter-front span { position: relative; color: #8b8998; text-shadow: 0 1px 0 #07060b; }
+/* 간판도 도트 캔버스로 (js/booth.js createSign): CSS 상자·삼각 장식은 끄고 글자만 남긴다 */
+.sign { background: none; border: 0; box-shadow: none; padding: 14px 40px 14px; animation: none; }
+.sign::before { display: none; }
+#sign-art { position: absolute; image-rendering: pixelated; pointer-events: none; z-index: -1; filter: drop-shadow(0 10px 18px rgba(0,0,0,.55)); }
+.sign b, .sign span { position: relative; }
+.sign b { animation: none; font-size: clamp(26px, 2.5vw, 44px); color: #f1dca6; text-shadow: 0 2px 0 #05040a, 0 0 8px rgba(255,200,120,.2); }
+.sign span { border-top: 0; padding-top: 7px; margin-top: 2px; color: #9ad6e4; text-shadow: 0 2px 0 #05040a; }

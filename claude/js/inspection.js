@@ -1,7 +1,8 @@
 // 이동관리국 통행 심사 장면.
 // 판정은 rules.js의 테스트 행마법만 사용한다. NFC·이미지 인식은 시뮬레이션이다.
 import { canMove, RANK_KO, RANK_EN, RULE_TEXT } from './rules.js';
-import { drawChecian } from './sprites.js';
+import { createOfficer } from './officer.js';
+import { createBooth, createCounter, createSign } from './booth.js';
 import { N } from './world.js';
 import { createNave } from './nave.js';
 import { createLanterns } from './lanterns.js';
@@ -22,10 +23,16 @@ export function createInspection({ sfx }) {
   const camBtn = $('#cam-btn'), checkBtn = $('#check-btn'), cancelBtn = $('#cancel-btn');
   const lineEl = $('#officer-line'), state = $('#screen-state'), verdictEl = $('#screen-verdict');
   const banner = $('#banner'), inner = $('.insp-inner');
-  drawChecian($('#officer'), 'rook', 'black');
   // 홀 배경: 평소엔 하늘인 척하는 스테인드글라스, 판정에 따라 초록/빨강으로 켜진다
   const hallState = () => root.classList.contains('denied') ? 'denied' : root.classList.contains('approved') ? 'approved' : root.classList.contains('scanning') ? 'scanning' : 'idle';
   let hall = null, lanterns = null;
+  // 홀 배경과 같은 도트 격자(화면 px/도트, 정수)
+  const hallScale = () => { const c = $('#hall-nave'); const k = c.width ? parseFloat(c.style.width) / c.width : 0; return k || Math.max(2, Math.round(innerHeight / 290)); };
+  const shown = () => !root.hidden;
+  createOfficer($('#officer'), { theme: 'black', zoom: hallScale, isActive: shown, getMood: hallState });
+  createBooth($('.booth'), { getMood: hallState, isActive: shown, getScale: hallScale, officer: $('#officer') });
+  createCounter($('.counter'), { getScale: hallScale, isActive: shown, getMood: hallState });
+  createSign($('.sign'), { getScale: hallScale, isActive: shown, getMood: hallState, booth: $('.booth') });
 
   let req = null, resolve = null, busy = false, stream = null, camReq = 0, timers = [], typing = null;
   const later = (fn, ms) => timers.push(setTimeout(fn, ms));

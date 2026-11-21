@@ -13,7 +13,19 @@ function rgb(hex) {
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
 }
 
+// 완성된 도트 PNG가 있는 계급은 코드 마커 대신 그 그림을 쓴다
+const PNG = { rook: c => new URL(`../assets/sprites/rook/rook_map_${c}.png`, import.meta.url).href };
+export const PNG_SIZE = { rook: [30, 32] };
+
 export function drawChecian(canvas, rank, color = 'white') {
+  if (PNG[rank]) {
+    const [w, h] = PNG_SIZE[rank];
+    canvas.width = w; canvas.height = h;
+    const im = new Image();
+    im.onload = () => { const c = canvas.getContext('2d'); c.clearRect(0, 0, w, h); c.drawImage(im, 0, 0); };
+    im.src = PNG[rank](color);
+    return canvas;
+  }
   canvas.width = SW;
   canvas.height = SH;
   const g = new Uint8Array(SW * SH);
@@ -87,6 +99,7 @@ export function drawChecian(canvas, rank, color = 'white') {
 const cache = new Map();
 export function spriteURL(rank, color) {
   const key = rank + ':' + color;
+  if (PNG[rank]) return PNG[rank](color);
   if (!cache.has(key)) cache.set(key, drawChecian(document.createElement('canvas'), rank, color).toDataURL());
   return cache.get(key);
 }

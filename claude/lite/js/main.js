@@ -78,7 +78,7 @@ const occupancy = new Map();
 const residents = [];
 function makePiece(rank, color, cls) {
   const el = document.createElement('div');
-  el.className = 'piece ' + cls;
+  el.className = 'piece ' + cls + ' rank-' + rank;
   el.innerHTML = '<div class="shadow"></div><div class="stand"><img alt=""></div>';
   el.querySelector('img').src = spriteURL(rank, color);
   return el;
@@ -107,6 +107,7 @@ function updateMe() {
 function drawPortrait() {
   drawChecian(els.portrait, state.rank, 'white');
   me.querySelector('img').src = spriteURL(state.rank, 'white');
+  me.className = me.className.replace(/rank-\w+/, 'rank-' + state.rank);
 }
 
 function showHover(p) {
