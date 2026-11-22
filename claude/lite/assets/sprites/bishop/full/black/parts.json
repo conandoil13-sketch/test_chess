@@ -1,0 +1,77 @@
+{
+ "w": 172,
+ "h": 210,
+ "layers": [
+  "wing",
+  "flap",
+  "legs_back",
+  "legs",
+  "pelvis",
+  "core",
+  "arm_far",
+  "torso",
+  "head",
+  "arm"
+ ],
+ "breath": {
+  "cycle": 5.2,
+  "parts": {
+   "wing": {
+    "amp": 2.0,
+    "delay": 0.22
+   },
+   "flap": {
+    "amp": 1.2,
+    "delay": 0.16
+   },
+   "legs_back": {
+    "amp": 0,
+    "delay": 0
+   },
+   "legs": {
+    "amp": 0,
+    "delay": 0
+   },
+   "pelvis": {
+    "amp": 0.4,
+    "delay": 0
+   },
+   "core": {
+    "amp": 0.7,
+    "delay": 0.0
+   },
+   "arm_far": {
+    "amp": 1.0,
+    "delay": 0.08
+   },
+   "torso": {
+    "amp": 1.4,
+    "delay": 0.0
+   },
+   "head": {
+    "amp": 1.8,
+    "delay": 0.1
+   },
+   "arm": {
+    "amp": 1.2,
+    "delay": 0.05
+   }
+  }
+ },
+ "eyes": [
+  [
+   113,
+   29
+  ],
+  [
+   114,
+   29
+  ],
+  [
+   115,
+   29
+  ]
+ ],
+ "vents": [],
+ "eyeColor": "#ff4d6a"
+}
