@@ -18,8 +18,9 @@ const PNG = {
   rook: c => new URL(`../assets/sprites/rook/rook_map_${c}.png`, import.meta.url).href,
   pawn: c => new URL(`../assets/sprites/pawn/pawn_map_${c}.png`, import.meta.url).href,
   knight: c => new URL(`../assets/sprites/knight/knight_map_${c}.png`, import.meta.url).href,
+  bishop: c => new URL(`../assets/sprites/bishop/bishop_map_${c}.png`, import.meta.url).href,
 };
-export const PNG_SIZE = { rook: [30, 32], pawn: [34, 32], knight: [34, 32] };
+export const PNG_SIZE = { rook: [30, 32], pawn: [34, 32], knight: [34, 32], bishop: [34, 32] };
 
 export function drawChecian(canvas, rank, color = 'white') {
   if (PNG[rank]) {
