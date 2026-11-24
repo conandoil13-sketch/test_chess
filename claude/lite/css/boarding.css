@@ -1,0 +1,45 @@
+/* ---------- 세계의 끝 모달: 첨두 아치 창틀 안 스테인드글라스 ---------- */
+#world-end { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; background: radial-gradient(ellipse at 50% 45%, rgba(20, 10, 40, .55), rgba(3, 2, 8, .86)); }
+#world-end[hidden] { display: none; }
+#world-end.pop .we-card { animation: wePop .42s cubic-bezier(.3, 1.4, .5, 1); }
+@keyframes wePop { from { transform: translateY(18px) scale(.94); opacity: 0; } }
+.we-card { position: relative; width: min(520px, 94vw); aspect-ratio: 520 / 380; filter: drop-shadow(0 0 30px rgba(120, 80, 220, .28)) drop-shadow(0 24px 40px rgba(0, 0, 0, .7)); }
+.we-frame { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.we-stone { fill: #15141c; stroke: var(--tracery, #8b8998); stroke-width: 4; }
+.we-inner { fill: none; stroke: #07050d; stroke-width: 4; }
+.we-mullion { stroke: #07050d; stroke-width: 3; opacity: .55; }
+.we-cusp { fill: none; stroke: var(--tracery, #8b8998); stroke-width: 4; stroke-linecap: square; }
+.we-rose circle, .we-rose path { fill: none; stroke: var(--tracery, #8b8998); stroke-width: 3; }
+.we-rose circle:first-child { fill: #2a1660; }
+.we-rose circle:last-child { fill: #f2c14e; stroke: #07050d; stroke-width: 2; animation: weRose 3.2s ease-in-out infinite; }
+@keyframes weRose { 50% { fill: #ffe39a; } }
+.we-body { position: absolute; left: 9%; right: 9%; top: 35%; bottom: 7%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.we-body p + .we-actions { margin-top: 4px; }
+.we-over::before, .we-over::after { content: ''; display: inline-block; vertical-align: middle; width: 34px; height: 2px; margin: 0 10px 2px; background: #5c5a6b; box-shadow: 0 2px 0 #05040a; }
+.we-over { font-size: 11px; letter-spacing: .38em; color: #9ad6e4; text-shadow: 0 2px 0 #05040a; }
+.we-body h2 { margin: 10px 0 8px; font-weight: 400; font-size: clamp(19px, 4.4vw, 26px); color: #f1dca6; text-shadow: 0 2px 0 #05040a, 0 0 12px rgba(255, 200, 120, .3); }
+.we-body p { margin: 0 0 22px; font-size: clamp(15px, 3.4vw, 19px); color: #e4def4; text-shadow: 0 2px 0 #05040a; }
+.we-body p::before, .we-body p::after { content: ' ✠ '; color: #8b8998; font-size: .8em; }
+.we-actions { display: grid; grid-template-columns: 1.5fr 1fr; gap: 14px; width: 100%; }
+.we-actions .btn { font-size: 15px; }
+
+/* ---------- 승급소 탑승장 관문 화면 ---------- */
+#boarding { position: fixed; inset: 0; z-index: 30; overflow: hidden; background: #05040a; }
+#boarding[hidden] { display: none; }
+#boarding-art { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); image-rendering: pixelated; }
+.bd-sign { position: absolute; left: 50%; top: 3vh; transform: translateX(-50%); text-align: center; white-space: nowrap; padding: 10px 30px 12px;
+  background: linear-gradient(180deg, rgba(28, 26, 38, .92), rgba(12, 11, 18, .92)); border: 2px solid #3d3b4a; box-shadow: 0 0 0 2px #05040a, inset 0 1px 0 rgba(127, 233, 255, .3); }
+.bd-sign b { display: block; font-weight: 400; font-size: clamp(22px, 2.2vw, 36px); letter-spacing: .14em; color: #f1dca6; text-shadow: 0 2px 0 #05040a, 0 0 8px rgba(255, 200, 120, .2); }
+.bd-sign span { display: block; margin-top: 4px; font-size: 11px; letter-spacing: .3em; color: #9ad6e4; text-shadow: 0 2px 0 #05040a; }
+#boarding .officer-line { top: auto; bottom: 3vh; }
+#boarding .device { left: auto; right: max(2vw, calc(50% - 760px)); top: 50%; bottom: auto; transform: translateY(-50%); width: clamp(260px, 21vw, 340px); }
+#boarding .screen { aspect-ratio: 4 / 3; }
+#boarding .device-actions .btn { white-space: nowrap; padding-inline: 12px; }
+.bd-who { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 0 2px 10px; padding: 6px 8px; background: #0b0a10; border: 1px solid #3d3b4a; }
+.bd-who span { font-size: 11px; color: #8b8998; letter-spacing: .1em; }
+.bd-who select { height: 30px; padding: 0 6px; font: inherit; font-size: 15px; color: #f1dca6; background: #0d121a; border: 1px solid #5c5a6b; }
+#boarding .banner { top: 38%; }
+@media (max-width: 900px) {
+  #boarding .device { top: auto; bottom: 12vh; right: 50%; transform: translateX(50%); }
+  #boarding .officer-line { min-width: 0; max-width: 92vw; white-space: normal; }
+}
