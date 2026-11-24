@@ -5,6 +5,7 @@ import { sfx, setSound, soundOn, unlockAudio } from './audio.js';
 import { createTiles } from './tiles.js';
 import { createInspection } from './inspection.js';
 import { createBoardingScreen } from './boarding-screen.js';
+import { createWorldEndArt } from './world-end.js';
 import { rng } from './noise.js';
 import { createSpace } from './space.js';
 import { createStations } from './station.js';
@@ -219,6 +220,7 @@ async function submit() {
 // 폰이 마지막 줄(y = 0)에 서 있을 때만 묻는다.
 const atWorldEnd = () => state.rank === 'pawn' && state.pos.y === 0;
 const offer = $('#world-end');
+const offerArt = createWorldEndArt($('#we-art'));
 let board, offerDone = null;
 function offerTower() {
   if (state.mode !== 'explore') return;
@@ -227,12 +229,14 @@ function offerTower() {
   setTarget(null);
   els.explore.inert = true;
   offer.hidden = false;
+  offerArt.start();
   offer.classList.remove('pop'); void offer.offsetWidth; offer.classList.add('pop');
   sfx.target();
   setTimeout(() => $('#we-yes').focus(), 60);
   offerDone = yes => {
     offerDone = null;
     offer.hidden = true;
+    offerArt.stop();
     els.explore.inert = false;
     state.mode = 'explore';
     if (yes) goBoarding();

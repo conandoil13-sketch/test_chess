@@ -1,27 +1,24 @@
 /* ---------- 세계의 끝 모달: 첨두 아치 창틀 안 스테인드글라스 ---------- */
-#world-end { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; background: radial-gradient(ellipse at 50% 45%, rgba(20, 10, 40, .55), rgba(3, 2, 8, .86)); }
+#world-end { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; background: rgba(3, 2, 8, .78); }
 #world-end[hidden] { display: none; }
-#world-end.pop .we-card { animation: wePop .42s cubic-bezier(.3, 1.4, .5, 1); }
-@keyframes wePop { from { transform: translateY(18px) scale(.94); opacity: 0; } }
-.we-card { position: relative; width: min(520px, 94vw); aspect-ratio: 520 / 380; filter: drop-shadow(0 0 30px rgba(120, 80, 220, .28)) drop-shadow(0 24px 40px rgba(0, 0, 0, .7)); }
-.we-frame { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.we-stone { fill: #15141c; stroke: var(--tracery, #8b8998); stroke-width: 4; }
-.we-inner { fill: none; stroke: #07050d; stroke-width: 4; }
-.we-mullion { stroke: #07050d; stroke-width: 3; opacity: .55; }
-.we-cusp { fill: none; stroke: var(--tracery, #8b8998); stroke-width: 4; stroke-linecap: square; }
-.we-rose circle, .we-rose path { fill: none; stroke: var(--tracery, #8b8998); stroke-width: 3; }
-.we-rose circle:first-child { fill: #2a1660; }
-.we-rose circle:last-child { fill: #f2c14e; stroke: #07050d; stroke-width: 2; animation: weRose 3.2s ease-in-out infinite; }
-@keyframes weRose { 50% { fill: #ffe39a; } }
-.we-body { position: absolute; left: 9%; right: 9%; top: 35%; bottom: 7%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+#world-end.pop .we-card { animation: wePop .42s steps(6); }
+@keyframes wePop { from { transform: translateY(18px); opacity: 0; } }
+/* 틀은 js/world-end.js 가 172×126 도트로 그린다. 정수 배율(3배, 좁으면 2배)로만 키운다 */
+.we-card { --k: 3; position: relative; width: calc(172px * var(--k)); height: calc(126px * var(--k)); filter: drop-shadow(0 calc(var(--k) * 4px) 0 rgba(0, 0, 0, .55)); }
+.we-frame { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+@media (max-width: 560px) { .we-card { --k: 2; } }
+.we-body { position: absolute; left: 10%; right: 10%; top: 43.5%; bottom: 8.5%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
 .we-body p + .we-actions { margin-top: 4px; }
 .we-over::before, .we-over::after { content: ''; display: inline-block; vertical-align: middle; width: 34px; height: 2px; margin: 0 10px 2px; background: #5c5a6b; box-shadow: 0 2px 0 #05040a; }
 .we-over { font-size: 11px; letter-spacing: .38em; color: #9ad6e4; text-shadow: 0 2px 0 #05040a; }
-.we-body h2 { margin: 10px 0 8px; font-weight: 400; font-size: clamp(19px, 4.4vw, 26px); color: #f1dca6; text-shadow: 0 2px 0 #05040a, 0 0 12px rgba(255, 200, 120, .3); }
-.we-body p { margin: 0 0 22px; font-size: clamp(15px, 3.4vw, 19px); color: #e4def4; text-shadow: 0 2px 0 #05040a; }
+.we-body h2 { margin: calc(var(--k) * 2px) 0 calc(var(--k) * 2px); font-weight: 400; font-size: calc(var(--k) * 8px); color: #f1dca6; text-shadow: 0 2px 0 #05040a, 2px 0 0 #05040a; }
+.we-body p { margin: 0 0 calc(var(--k) * 5px); font-size: calc(var(--k) * 6px); color: #e4def4; text-shadow: 0 2px 0 #05040a; }
 .we-body p::before, .we-body p::after { content: ' ✠ '; color: #8b8998; font-size: .8em; }
 .we-actions { display: grid; grid-template-columns: 1.5fr 1fr; gap: 14px; width: 100%; }
-.we-actions .btn { font-size: 15px; }
+.we-actions .btn { font-size: calc(var(--k) * 5px); white-space: nowrap; padding-inline: 10px; }
+/* 모달 안 버튼은 번지는 빛 없이 딱 떨어지는 도트 테두리만 */
+#world-end .btn.primary { filter: drop-shadow(2px 0 0 var(--tracery)) drop-shadow(-2px 0 0 var(--tracery)) drop-shadow(0 2px 0 var(--tracery)) drop-shadow(0 -2px 0 var(--tracery)) drop-shadow(2px 0 0 #07050d) drop-shadow(-2px 0 0 #07050d) drop-shadow(0 2px 0 #07050d) drop-shadow(0 -2px 0 #07050d); }
+#world-end .btn.ghost { background: #15141c; box-shadow: inset 0 0 0 2px #5c5a6b, 0 0 0 2px #07050d, 0 4px 0 #07050d; }
 
 /* ---------- 승급소 탑승장 관문 화면 ---------- */
 #boarding { position: fixed; inset: 0; z-index: 30; overflow: hidden; background: #05040a; }

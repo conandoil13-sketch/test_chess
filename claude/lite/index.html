@@ -201,22 +201,7 @@
   <!-- 세계의 끝: 폰이 마지막 줄에 닿으면 승급소로 갈지 묻는다 -->
   <div id="world-end" hidden role="dialog" aria-modal="true" aria-labelledby="we-title">
     <div class="we-card">
-      <svg class="we-frame" viewBox="0 0 520 380" aria-hidden="true" shape-rendering="crispEdges">
-        <defs>
-          <linearGradient id="we-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3e2382"/><stop offset=".55" stop-color="#251454"/><stop offset="1" stop-color="#170c36"/></linearGradient>
-          <radialGradient id="we-rosy" cx=".5" cy="1.08" r=".7"><stop offset="0" stop-color="#c846aa" stop-opacity=".45"/><stop offset="1" stop-color="#c846aa" stop-opacity="0"/></radialGradient>
-          <pattern id="we-lead" width="28" height="44" patternUnits="userSpaceOnUse"><path d="M14 0 L28 22 L14 44 L0 22 Z" fill="none" stroke="#0c061a" stroke-opacity=".55" stroke-width="2"/></pattern>
-        </defs>
-        <path class="we-stone" d="M6 380 V146 Q10 62 260 2 Q510 62 514 146 V380 Z"/>
-        <path d="M26 370 V154 Q30 84 260 24 Q490 84 494 154 V370 Z" fill="url(#we-g)"/>
-        <path d="M26 370 V154 Q30 84 260 24 Q490 84 494 154 V370 Z" fill="url(#we-rosy)"/>
-        <path d="M26 370 V154 Q30 84 260 24 Q490 84 494 154 V370 Z" fill="url(#we-lead)"/>
-        <path class="we-inner" d="M26 370 V154 Q30 84 260 24 Q490 84 494 154 V370 Z"/>
-        <path class="we-mullion" d="M26 132 H494"/>
-        <g class="we-rose"><circle cx="260" cy="84" r="36"/><circle cx="260" cy="84" r="22"/>
-          <path d="M260 48 V120 M224 84 H296 M234.5 58.5 L285.5 109.5 M285.5 58.5 L234.5 109.5"/><circle cx="260" cy="84" r="7"/></g>
-        <path class="we-cusp" d="M260 2 V-14 M252 -8 H268"/>
-      </svg>
+      <canvas class="we-frame" id="we-art" aria-hidden="true"></canvas>
       <div class="we-body">
         <span class="we-over">WORLD'S END · CB-120</span>
         <h2 id="we-title">폰이 세계의 끝에 도달했습니다.</h2>
