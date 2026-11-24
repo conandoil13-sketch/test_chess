@@ -2,7 +2,7 @@
 // 흐름 판단은 promotion.js 가 하고, 여기서는 버튼·글자·키보드만 다룬다.
 // 비주얼은 아직 자리만 있다(컷씬은 글자 장면, 승급소 풍경은 폰 수조 예정 자리).
 import { RANK_KO, RANK_EN, RULE_TEXT } from './rules.js';
-import { createPromotion, CHOICES, LOCKED, CUTSCENE, STEP, BISHOP } from './promotion.js';
+import { createPromotion, CHOICES, LOCKED, STEP, BISHOP, sceneList } from './promotion.js';
 
 export function createPromotionScreen({ sfx }) {
   const root = document.querySelector('#promotion');
@@ -14,8 +14,19 @@ export function createPromotionScreen({ sfx }) {
   const later = (fn, ms) => timers.push(setTimeout(fn, ms));
   const clear = () => { timers.forEach(clearTimeout); timers = []; clearInterval(typing); };
 
-  // 컷씬 진행 표시
-  cutSteps.innerHTML = CUTSCENE.map(s => `<li data-id="${s.id}">${s.title}</li>`).join('');
+  // 컷씬 두 가지: 로켓 비행(도착 전), 변화(계급 확정 뒤). 같은 자리를 쓰고 글만 바꾼다
+  const CUT_LABEL = {
+    cutscene: ['ROCKET FLIGHT · CB-120 → PROMOTION TOWER', '로켓 비행 컷씬 자리 (준비 중)'],
+    transform: ['TRANSFORMATION · CHAMBER OF RANKS', '변화 컷씬 자리 · 폰 수조 (준비 중)'],
+  };
+  let cutKind = '';
+  function setCutKind(kind, rank) {
+    if (cutKind === kind) return;
+    cutKind = kind;
+    $('#pr-cut-over').textContent = kind === 'transform' ? `TRANSFORMATION · PAWN → ${RANK_EN[rank]}` : CUT_LABEL[kind][0];
+    $('#pr-cut-ph').textContent = CUT_LABEL[kind][1];
+    cutSteps.innerHTML = sceneList(kind).map(s => `<li data-id="${s.id}">${s.title}</li>`).join('');
+  }
   // 선택지 버튼: 고를 수 있는 넷 + 잠긴 킹
   list.innerHTML = [...CHOICES, ...Object.keys(LOCKED)].map((r, i) => {
     const locked = !!LOCKED[r];
@@ -36,12 +47,14 @@ export function createPromotionScreen({ sfx }) {
 
   // 단계가 바뀔 때마다 화면을 맞춘다
   function render(s) {
-    const same = root.dataset.step === s.step && s.step !== STEP.CUTSCENE;
+    const same = root.dataset.step === s.step && s.step !== STEP.CUTSCENE && s.step !== STEP.TRANSFORM;
     root.dataset.step = s.step;
     errEl.textContent = s.error || '';
     if (s.error) sfx.deny();
     if (same) return;          // 같은 단계 안의 변화(잘못 고른 경우 등)는 안내문만 바꾼다
-    if (s.step === STEP.CUTSCENE) {
+    root.classList.toggle('transforming', s.step === STEP.TRANSFORM);
+    if (s.step === STEP.CUTSCENE || s.step === STEP.TRANSFORM) {
+      setCutKind(s.step, s.choice);
       const sc = s.sceneInfo;
       cutTitle.textContent = sc.title;
       cutText.textContent = sc.text;
@@ -76,6 +89,7 @@ export function createPromotionScreen({ sfx }) {
 
   function open(rank) {
     from = rank;
+    cutKind = '';
     clear();
     flow = createPromotion({ from: rank, onChange: render });
     root.dataset.step = 'idle';
@@ -113,7 +127,7 @@ export function createPromotionScreen({ sfx }) {
     const st = flow.step;
     if (e.key === 'Escape') {
       e.preventDefault();
-      if (st === STEP.CUTSCENE) flow.skip();
+      if (st === STEP.CUTSCENE || st === STEP.TRANSFORM) flow.skip();
       else if (st === STEP.CONFIRM) flow.back();
     } else if (e.key === 'Enter' && !e.repeat) {
       // 포커스된 버튼은 브라우저가 누르므로, 버튼이 아닌 곳에서만 대신 누른다

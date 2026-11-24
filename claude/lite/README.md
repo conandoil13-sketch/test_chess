@@ -62,8 +62,8 @@ python3 -m http.server 8123
 | `js/lanterns.js` | 이동관리국 천장의 도트 신호 랜턴 |
 | `js/boarding.js` | 승급소 탑승장 도트 장면(아트만, 아직 어디에서도 쓰지 않음): 트인 체스판 갑판, 끝의 고딕 첨탑 로켓과 정비 탑, 관문 양옆의 나이트 둘, pixelfx 별똥별·안개·레이저 관문·통과 빛기둥. `getState()`로 idle·checking·granted·denied 색만 바뀜 |
 | `js/boarding-gate.js` | 탑승장 관문 로직: 폰만 통과, idle → checking → granted/denied → idle 상태 기계 |
-| `js/promotion.js` | 승급 흐름 로직(DOM 없음): 컷씬 → 도착 → 고르기 → 확인 → 승급/포기 상태 기계. 선택지는 퀸·룩·비숍·나이트(킹은 잠김) |
-| `js/promotion-screen.js` · `css/promotion.css` | 승급소 화면 구조: 로켓 컷씬(글자 장면·건너뛰기), 비숍 대사, 계급 버튼(숫자 키), 확인·귀환 버튼. 비주얼(컷씬·폰 수조)은 자리만 |
+| `js/promotion.js` | 승급 흐름 로직(DOM 없음): 비행 컷씬 → 도착 → 고르기 → 확인 → 변화 컷씬 → 승급(또는 포기) 상태 기계. 선택지는 퀸·룩·비숍·나이트(킹은 잠김) |
+| `js/promotion-screen.js` · `css/promotion.css` | 승급소 화면 구조: 로켓 비행·변화 컷씬(글자 장면·건너뛰기), 비숍 대사, 계급 버튼(숫자 키), 확인·귀환 버튼. 비주얼(컷씬·폰 수조)은 자리만 |
 | `js/terminal.js` | 통행증 확인 단말 도트 렌더러: 돌 케이스·첨두 지붕과 상태 렌즈·볼트·CRT 화면(주사선·NFC 물결·스캔 빔·판정색)을 그린다. 이동관리국과 탑승장이 함께 쓴다 |
 | `js/world-end.js` | 세계의 끝 모달 틀: 첨두 아치 돌창·스테인드글라스·장미창을 172×126 도트로 그리고, 둘레 여백에 창 뒤 빛살·보랏빛 후광·양옆 촛불·떠다니는 먼지·십자 반짝임을 10fps 도트로 그린다 |
 | `js/boarding-screen.js` · `css/boarding.css` | 세계의 끝 모달(폰이 맨 윗줄에 서면 "프로모션 타워로 가시겠습니까?")과 탑승장 관문 심사 화면. 이동관리국 흐름을 재사용하고 판정은 boarding-gate.js(폰 전용) |

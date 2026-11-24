@@ -3,8 +3,11 @@
 #promotion { position: fixed; inset: 0; z-index: 30; overflow: hidden; background: #05040a; color: #e6e3ef; }
 #promotion[hidden] { display: none; }
 #promotion .pr-cut, #promotion .pr-tower { position: absolute; inset: 0; display: none; }
-#promotion[data-step='cutscene'] .pr-cut { display: flex; }
-#promotion:not([data-step='cutscene']):not([data-step='idle']) .pr-tower { display: block; }
+#promotion[data-step='cutscene'] .pr-cut, #promotion[data-step='transform'] .pr-cut { display: flex; }
+#promotion:not([data-step='cutscene']):not([data-step='transform']):not([data-step='idle']) .pr-tower { display: block; }
+/* 변화 컷씬은 보랏빛으로 구분 */
+#promotion.transforming .pr-over { color: #c79bff; }
+#promotion.transforming .pr-cut-steps li.now { background: #c79bff; border-color: #c79bff; }
 
 /* 자리 표시: 나중에 도트 장면이 들어갈 곳 */
 .pr-cut-view, .pr-stage { display: grid; place-items: center; border: 2px dashed #3d3b4a; color: #5c5a6b; font-size: 13px; letter-spacing: .08em; background: repeating-linear-gradient(45deg, #0b0a10 0 10px, #0e0d14 10px 20px); }
