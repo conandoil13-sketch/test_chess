@@ -1,0 +1,61 @@
+/* ---------- 승급소 (구조만: 비주얼은 다음 단계) ----------
+   data-step 으로 보일 부분을 고른다: cutscene / arrived / choosing / confirm / promoted / aborted */
+#promotion { position: fixed; inset: 0; z-index: 30; overflow: hidden; background: #05040a; color: #e6e3ef; }
+#promotion[hidden] { display: none; }
+#promotion .pr-cut, #promotion .pr-tower { position: absolute; inset: 0; display: none; }
+#promotion[data-step='cutscene'] .pr-cut { display: flex; }
+#promotion:not([data-step='cutscene']):not([data-step='idle']) .pr-tower { display: block; }
+
+/* 자리 표시: 나중에 도트 장면이 들어갈 곳 */
+.pr-cut-view, .pr-stage { display: grid; place-items: center; border: 2px dashed #3d3b4a; color: #5c5a6b; font-size: 13px; letter-spacing: .08em; background: repeating-linear-gradient(45deg, #0b0a10 0 10px, #0e0d14 10px 20px); }
+
+/* 컷씬 */
+.pr-cut { flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px; text-align: center; }
+.pr-over { font-size: 11px; letter-spacing: .34em; color: #9ad6e4; }
+.pr-cut-view { width: min(640px, 90vw); aspect-ratio: 16 / 9; }
+.pr-cut b { font-weight: 400; font-size: clamp(26px, 3vw, 40px); color: #f1dca6; letter-spacing: .14em; text-shadow: 0 2px 0 #05040a; }
+.pr-cut p { margin: 0; font-size: 16px; color: #c9c6d4; min-height: 1.5em; }
+.pr-cut-steps { display: flex; gap: 6px; list-style: none; margin: 6px 0 4px; padding: 0; }
+.pr-cut-steps li { padding: 4px 10px; font-size: 12px; color: #5c5a6b; border: 2px solid #2a2836; background: #0b0a10; }
+.pr-cut-steps li.done { color: #8b8998; border-color: #3d3b4a; }
+.pr-cut-steps li.now { color: #1b1305; background: #f2c14e; border-color: #f2c14e; }
+
+/* 승급소 */
+.pr-sign { position: absolute; left: 50%; top: 3vh; transform: translateX(-50%); text-align: center; white-space: nowrap; padding: 10px 30px 12px;
+  background: linear-gradient(180deg, rgba(28, 26, 38, .92), rgba(12, 11, 18, .92)); border: 2px solid #3d3b4a; box-shadow: 0 0 0 2px #05040a; z-index: 2; }
+.pr-sign b { display: block; font-weight: 400; font-size: clamp(22px, 2.2vw, 36px); letter-spacing: .2em; color: #f1dca6; }
+.pr-sign span { display: block; margin-top: 4px; font-size: 11px; letter-spacing: .3em; color: #c79bff; }
+.pr-stage { position: absolute; left: 50%; top: 14vh; transform: translateX(-50%); width: min(420px, 60vw); height: 34vh; }
+#promotion .pr-line { top: calc(14vh + 34vh + 14px); bottom: auto; }
+.pr-panel { position: absolute; left: 50%; bottom: 4vh; transform: translateX(-50%); width: min(760px, 94vw); display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.pr-greet, .pr-choose, .pr-confirm, .pr-done { display: none; width: 100%; }
+#promotion[data-step='arrived'] .pr-greet,
+#promotion[data-step='promoted'] .pr-done { display: flex; justify-content: center; }
+#promotion[data-step='choosing'] .pr-choose,
+#promotion[data-step='confirm'] .pr-choose { display: block; }
+#promotion[data-step='confirm'] .pr-confirm { display: block; }
+#promotion[data-step='promoted'] .pr-abort, #promotion[data-step='aborted'] .pr-abort { display: none; }
+#promotion[data-step='confirm'] .pr-choice:not(.on) { opacity: .35; }
+
+.pr-head { display: flex; justify-content: space-between; font-size: 12px; letter-spacing: .14em; color: #8b8998; border-bottom: 2px solid #2a2836; padding-bottom: 6px; margin-bottom: 10px; }
+.pr-head small { color: #5c5a6b; letter-spacing: .06em; }
+.pr-choices { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.pr-choice { position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 12px 6px 10px; text-align: center;
+  background: #121119; border: 2px solid #3d3b4a; box-shadow: 0 0 0 2px #05040a, 0 4px 0 #05040a; color: #e6e3ef; cursor: pointer; }
+.pr-choice:hover:not(.locked), .pr-choice:focus-visible { border-color: #8b8998; background: #1a1824; outline: none; }
+.pr-choice.on { border-color: #c79bff; background: #221a36; box-shadow: 0 0 0 2px #05040a, 0 0 16px rgba(199, 155, 255, .35); }
+.pr-choice b { font-weight: 400; font-size: 20px; color: #f1dca6; }
+.pr-choice small { font-size: 10px; letter-spacing: .16em; color: #8b8998; }
+.pr-choice span { font-size: 11px; color: #9ad6e4; }
+.pr-choice kbd, .pr-choice i { position: absolute; left: 5px; top: 5px; font-style: normal; font-size: 10px; }
+.pr-choice i { color: #5c5a6b; left: auto; right: 5px; }
+.pr-choice.locked { cursor: not-allowed; opacity: .45; filter: grayscale(1); }
+.pr-error { margin: 8px 0 0; min-height: 1.3em; font-size: 13px; color: #ff8492; text-align: center; }
+.pr-confirm p { margin: 0 0 10px; text-align: center; font-size: 18px; color: #f1dca6; }
+.pr-actions { display: grid; grid-template-columns: 1.4fr 1fr; gap: 10px; }
+.pr-abort { font-size: 13px; padding: 8px 14px; }
+@media (max-width: 700px) {
+  .pr-choices { grid-template-columns: repeat(3, 1fr); }
+  .pr-stage { height: 22vh; }
+  #promotion .pr-line { top: calc(14vh + 22vh + 10px); min-width: 0; max-width: 92vw; white-space: normal; }
+}

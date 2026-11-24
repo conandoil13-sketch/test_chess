@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="./css/style.css">
   <link rel="stylesheet" href="./css/inspection.css">
   <link rel="stylesheet" href="./css/boarding.css">
+  <link rel="stylesheet" href="./css/promotion.css">
 </head>
 <body>
   <!-- 부팅 화면 -->
@@ -241,6 +242,40 @@
       <p class="device-note">승인 조건 · 폰(PAWN)만 탑승할 수 있습니다</p>
     </div>
     <div class="banner" id="bd-banner"><b></b><span></span></div>
+  </section>
+
+  <!-- 승급소: 로켓 컷씬 → 도착 → 비숍과 계급 고르기 (비주얼은 아직 자리만) -->
+  <section id="promotion" hidden aria-label="승급소" data-step="idle">
+    <div class="pr-cut">
+      <span class="pr-over">ROCKET FLIGHT · CB-120 → PROMOTION TOWER</span>
+      <div class="pr-cut-view" aria-hidden="true"><span>로켓 비행 컷씬 자리 (준비 중)</span></div>
+      <b id="pr-cut-title"></b>
+      <p id="pr-cut-text"></p>
+      <ol class="pr-cut-steps" id="pr-cut-steps"></ol>
+      <button id="pr-skip" class="btn ghost" type="button">건너뛰기 <kbd>Esc</kbd></button>
+    </div>
+    <div class="pr-tower">
+      <div class="pr-sign"><b>승급소</b><span>PROMOTION TOWER · CHAMBER OF RANKS</span></div>
+      <div class="pr-stage" aria-hidden="true"><span>승급소 풍경 자리 · 폰 수조 (준비 중)</span></div>
+      <p class="officer-line pr-line"><span>비숍</span><b id="pr-line"></b></p>
+      <div class="pr-panel">
+        <div class="pr-greet"><button id="pr-begin" class="btn primary" type="button">계급 고르기 <kbd>Enter</kbd></button></div>
+        <div class="pr-choose">
+          <div class="pr-head">되고 싶은 계급 <small>숫자 키 1–4</small></div>
+          <div class="pr-choices" id="pr-choices"></div>
+          <p class="pr-error" id="pr-error" role="alert"></p>
+        </div>
+        <div class="pr-confirm">
+          <p id="pr-confirm-text"></p>
+          <div class="pr-actions">
+            <button id="pr-yes" class="btn primary" type="button">승급한다 <kbd>Enter</kbd></button>
+            <button id="pr-back" class="btn ghost" type="button">다시 고르기 <kbd>Esc</kbd></button>
+          </div>
+        </div>
+        <div class="pr-done"><button id="pr-home" class="btn primary" type="button">지표면으로 귀환 <kbd>Enter</kbd></button></div>
+        <button id="pr-abort" class="btn ghost pr-abort" type="button">승급하지 않고 돌아가기</button>
+      </div>
+    </div>
   </section>
 
   <script type="module" src="./js/main.js"></script>

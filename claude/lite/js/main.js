@@ -6,6 +6,7 @@ import { createTiles } from './tiles.js';
 import { createInspection } from './inspection.js';
 import { createBoardingScreen } from './boarding-screen.js';
 import { createWorldEndArt } from './world-end.js';
+import { createPromotionScreen } from './promotion-screen.js';
 import { rng } from './noise.js';
 import { createSpace } from './space.js';
 import { createStations } from './station.js';
@@ -24,7 +25,7 @@ const store = {
 const state = {
   pos: { x: 9, y: 10 },
   rank: store.get('cbc-rank', 'pawn'),
-  mode: 'boot',          // boot | explore | inspect | moving | offer | boarding
+  mode: 'boot',          // boot | explore | inspect | moving | offer | boarding | promotion
   selected: false,
   target: null,
   hover: null,
@@ -221,7 +222,7 @@ async function submit() {
 const atWorldEnd = () => state.rank === 'pawn' && state.pos.y === 0;
 const offer = $('#world-end');
 const offerArt = createWorldEndArt($('#we-art'));
-let board, offerDone = null;
+let board, promo, offerDone = null;
 function offerTower() {
   if (state.mode !== 'explore') return;
   state.mode = 'offer';
@@ -258,6 +259,7 @@ async function goBoarding() {
   await tiles.uncover();
   const result = await board.enter();
   sfx.door();
+  if (result === true) { await goPromotion(); return; }
   tiles.label('CB-120', 'SURFACE MAP', '지표면으로 돌아가는 중');
   await tiles.cover();
   board.hide();
@@ -267,11 +269,44 @@ async function goBoarding() {
   cam.x = camT.x; cam.y = camT.y;
   await tiles.uncover();
   tiles.label();
-  if (result === true) setStatus('탑승 승인 — 승급소 로켓이 출발을 준비합니다. (승급소 장면은 준비 중)', 'ok');
-  else if (result === false) {
+  if (result === false) {
     me.classList.remove('denied'); void me.offsetWidth; me.classList.add('denied');
     setStatus('탑승 거절 — 폰만 승급소에 갈 수 있습니다.', 'bad');
   } else setStatus('탑승장에서 돌아왔습니다.');
+  setStep(0);
+  state.mode = 'explore';
+}
+
+// 탑승 승인 → 로켓 컷씬 → 승급소에서 비숍과 계급 고르기 → 지표면 귀환
+async function goPromotion() {
+  state.mode = 'promotion';
+  tiles.label('CB-120', 'PROMOTION TOWER', '로켓 발사 준비');
+  await tiles.cover();
+  board.hide();
+  promo.open(state.rank);
+  await tiles.uncover();
+  const rank = await promo.play();
+  sfx.door();
+  tiles.label('CB-120', 'SURFACE MAP', '지표면으로 귀환 중');
+  await tiles.cover();
+  promo.hide();
+  if (rank) {
+    state.rank = rank;
+    store.set('cbc-rank', rank);
+    els.rank.value = rank;
+    drawPortrait();
+  }
+  els.explore.inert = false;
+  state.selected = false;
+  updateMe();
+  focusCell(state.pos);
+  cam.x = camT.x; cam.y = camT.y;
+  await tiles.uncover();
+  tiles.label();
+  if (rank) {
+    me.classList.remove('landed'); void me.offsetWidth; me.classList.add('landed');
+    setStatus(`승급 완료 — 이제 ${RANK_KO[rank]}입니다. 새 행마법으로 움직일 수 있습니다.`, 'ok');
+  } else setStatus('승급하지 않고 지표면으로 돌아왔습니다.');
   setStep(0);
   state.mode = 'explore';
 }
@@ -416,7 +451,7 @@ els.mini.addEventListener('click', e => {
 });
 
 // ---------- 루프 ----------
-const covered = () => state.mode === 'inspect' || state.mode === 'boarding';
+const covered = () => state.mode === 'inspect' || state.mode === 'boarding' || state.mode === 'promotion';
 let world = null, stations = null, fxCtx = null, last = performance.now(), fxLast = 0, spaceLast = 0;
 const space = createSpace($('#space'));
 let bootDone = false;
@@ -523,6 +558,7 @@ async function boot() {
   tiles = createTiles($('#tiles'));
   insp = createInspection({ sfx });
   board = createBoardingScreen({ sfx });
+  promo = createPromotionScreen({ sfx });
 
   bar.style.width = '100%';
   bootStatus.textContent = '관측 준비 완료';
