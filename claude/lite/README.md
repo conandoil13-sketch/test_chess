@@ -60,6 +60,8 @@ python3 -m http.server 8123
 | `js/station.js` | 행성 밖 승급소와 우주선 비행 |
 | `js/space.js` | 도트 우주 배경 |
 | `js/lanterns.js` | 이동관리국 천장의 도트 신호 랜턴 |
+| `js/boarding.js` | 승급소 탑승장 도트 장면(아트만, 아직 어디에서도 쓰지 않음): 트인 체스판 갑판, 끝의 고딕 첨탑 로켓과 정비 탑, 관문 양옆의 나이트 둘, pixelfx 별똥별·안개·레이저 관문·통과 빛기둥. `getState()`로 idle·checking·granted·denied 색만 바뀜 |
+| `js/boarding-gate.js` | 탑승장 관문 로직(아트와 미연결): 폰만 통과, idle → checking → granted/denied → idle 상태 기계 |
 | `js/nave.js` | 로딩 화면 성당과 이동관리국 홀의 도트 장면(스테인드글라스, 빛줄기, 정육면체 행성) |
 | `js/vendor/pixelfx/` | 촛불·횃불 효과 라이브러리 [pixelfx](https://github.com/patch-gg/pixelfx) 일부 사본 (MIT, `LICENSE`·`NOTICE.md` 포함) |
 | `js/audio.js` | 효과음 |
