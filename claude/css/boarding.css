@@ -4,9 +4,9 @@
 #world-end.pop .we-card { animation: wePop .42s steps(6); }
 @keyframes wePop { from { transform: translateY(18px); opacity: 0; } }
 /* 틀은 js/world-end.js 가 172×126 도트로 그린다. 정수 배율(3배, 좁으면 2배)로만 키운다 */
-.we-card { --k: 3; position: relative; width: calc(172px * var(--k)); height: calc(126px * var(--k)); filter: drop-shadow(0 calc(var(--k) * 4px) 0 rgba(0, 0, 0, .55)); }
-.we-frame { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
-@media (max-width: 560px) { .we-card { --k: 2; } }
+.we-card { --k: 3; position: relative; width: calc(172px * var(--k)); height: calc(126px * var(--k)); }
+.we-frame { position: absolute; left: calc(var(--k) * -30px); top: calc(var(--k) * -24px); width: calc(232px * var(--k)); height: calc(158px * var(--k)); image-rendering: pixelated; pointer-events: none; }
+@media (max-width: 720px) { .we-card { --k: 2; } }
 .we-body { position: absolute; left: 10%; right: 10%; top: 43.5%; bottom: 8.5%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
 .we-body p + .we-actions { margin-top: 4px; }
 .we-over::before, .we-over::after { content: ''; display: inline-block; vertical-align: middle; width: 34px; height: 2px; margin: 0 10px 2px; background: #5c5a6b; box-shadow: 0 2px 0 #05040a; }

@@ -1,6 +1,8 @@
 // 세계의 끝 모달 틀: 첨두 아치 돌창 + 마름모 납선 스테인드글라스 + 장미창을 도트로 그린다.
 // 저해상도(172×126)로 그리고 CSS에서 정수 배율로 키운다(image-rendering: pixelated).
 export const WE_W = 172, WE_H = 126;
+// 캔버스 여백(이펙트용): 창틀은 (OX, OY)에서 시작한다
+export const OX = 30, OY = 24;
 const CX = WE_W / 2, Y0 = 52, APEX = 8, BOTTOM = 119, A = 80;
 
 const C = {
@@ -25,9 +27,7 @@ function depth(x, y) { let i = -1; while (i < 12 && inArch(x, y, i + 1)) i++; re
 const ROSE = { x: CX, y: 31, r: 13 };
 
 export function createWorldEndArt(canvas) {
-  canvas.width = WE_W; canvas.height = WE_H;
   const ctx = canvas.getContext('2d');
-  const img = ctx.createImageData(WE_W, WE_H), px = img.data;
   const rgb = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
   const P = Object.fromEntries(Object.entries(C).map(([k, v]) => [k, rgb(v)]));
   const base = new Array(WE_W * WE_H).fill(null);   // 고정 그림
@@ -145,33 +145,153 @@ export function createWorldEndArt(canvas) {
   }
   for (let y = BOTTOM + 1; y <= BOTTOM + 5; y++) { put(0, y, 'ink'); put(WE_W - 1, y, 'ink'); }
 
-  // --- 매 프레임: 고정 그림 + 유리를 천천히 지나가는 빛 + 장미창 가운데 맥동 ---
-  const SWEEP = 7.5;
-  function draw(t) {
-    const ph = (t / SWEEP) % 1, band = -60 + ph * 2.2 * (WE_W + 120);   // 앞 45%만 지나가고 나머지는 쉰다
-    const pulse = 0.5 + 0.5 * Math.sin(t * 2.2);
-    for (let i = 0, n = WE_W * WE_H; i < n; i++) {
-      const k = base[i], o = i * 4;
-      if (!k) { px[o + 3] = 0; continue; }
-      let c = P[k];
-      const x = i % WE_W, y = (i / WE_W) | 0;
-      if (glass[i] && k !== 'lead') {
-        const d = x + y * 0.55 - band;
-        if (d > -5 && d < 5) {
-          const f = 1 - Math.abs(d) / 5;
-          if (dither(x, y, f * 0.9)) c = k === 'g4' || k === 'g3' ? P.g5 : k === 'g2' ? P.g4 : k === 'g1' || k === 'g0' ? P.g3 : k === 'blue' ? P.blueHi : k === 'rose' ? P.roseHi : c;
-        }
-      }
-      if (k === 'goldMid' && dither(x, y, pulse)) c = P.goldHi;
-      px[o] = c[0]; px[o + 1] = c[1]; px[o + 2] = c[2]; px[o + 3] = 255;
+  // ================= 이펙트 (시작 화면처럼 은은하게) =================
+  // 캔버스는 창틀보다 넓게 잡고, 바깥 여백에 뒤쪽 빛살·후광·촛불·먼지를 그린다.
+  const CW = WE_W + OX * 2, CH = WE_H + OY + 8, N = CW * CH;
+  canvas.width = CW; canvas.height = CH;
+  const out = ctx.createImageData(CW, CH), od = out.data;
+  const R = new Float32Array(N), G = new Float32Array(N), B = new Float32Array(N), Al = new Float32Array(N);
+  const LR = new Float32Array(N), LG = new Float32Array(N), LB = new Float32Array(N);
+  const RX = OX + ROSE.x, RY = OY + ROSE.y;
+  const SILL = OY + BOTTOM + 1;            // 창턱 맨 윗줄 (캔버스 좌표)
+
+  // 창턱을 양옆으로 늘려 촛대 선반으로 쓴다
+  const ext = new Array(N).fill(null);
+  const putC = (x, y, c) => { if (x >= 0 && y >= 0 && x < CW && y < CH) ext[y * CW + x] = c; };
+  for (const [x0, x1] of [[OX - 26, OX - 1], [OX + WE_W, OX + WE_W + 25]]) for (let x = x0; x <= x1; x++) {
+    putC(x, SILL, 'ink'); putC(x, SILL + 1, x < CW / 2 ? 'sl' : 'sm'); putC(x, SILL + 2, 'sm'); putC(x, SILL + 3, 'sd'); putC(x, SILL + 4, 'ink');
+    if (x === x0 || x === x1) for (let y = SILL; y <= SILL + 4; y++) putC(x, y, 'ink');
+  }
+  // 양쪽에 촛불 셋씩 (가운데가 가장 길다)
+  const flames = [];
+  for (const side of [-1, 1]) for (const [dx, h] of [[21, 6], [15, 10], [9, 7]]) {
+    const x = side < 0 ? OX - dx : OX + WE_W - 1 + dx, top = SILL - h;
+    for (let y = top; y < SILL; y++) { putC(x, y, 'wax'); putC(x + 1, y, 'waxD'); }
+    putC(x, top, 'waxHi');
+    putC(x - 1, SILL - 1, 'brass'); putC(x + 2, SILL - 1, 'brassD');
+    flames.push({ x, y: top - 1, p: flames.length * 1.7 });
+  }
+  Object.assign(P, { wax: [228, 214, 186], waxD: [170, 150, 122], waxHi: [250, 240, 214], brass: [214, 168, 72], brassD: [120, 86, 34] });
+
+  // 유리·돌 위 반짝임 후보: 장미창 둘레의 유리, 아치 돌 가장자리 밝은 면
+  const spots = [];
+  for (let y = 0; y < Y0; y++) for (let x = 0; x < WE_W; x++) {
+    const k = base[y * WE_W + x];
+    if ((k === 'sh' || (k === 'lead' && y < Y0 - 6)) && ((x * 7 + y * 13) % 5 === 0)) spots.push([OX + x, OY + y]);
+  }
+  const hash = n => { const v = Math.sin(n * 127.1 + 311.7) * 43758.5453; return v - Math.floor(v); };
+  const motes = Array.from({ length: 46 }, (_, n) => ({
+    x: hash(n) * CW, y: hash(n + 50) * CH, sp: 1.2 + hash(n + 100) * 2.6, p: hash(n + 150) * 6.28, s: 0.6 + hash(n + 200),
+    c: n % 3 === 0 ? [255, 227, 154] : n % 3 === 1 ? [201, 182, 255] : [240, 150, 220],
+  }));
+
+  // 빛을 계단(도트)으로 더한다: 부드러운 값을 8단계 + 디더로 끊는다
+  function light(cx, cy, r, c, k) {
+    const x0 = Math.max(0, Math.floor(cx - r)), x1 = Math.min(CW - 1, Math.ceil(cx + r));
+    const y0 = Math.max(0, Math.floor(cy - r)), y1 = Math.min(CH - 1, Math.ceil(cy + r));
+    for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
+      const d = Math.hypot(x + 0.5 - cx, y + 0.5 - cy) / r;
+      if (d >= 1) continue;
+      const v = k * (1 - d) * (1 - d) * 8, q = (Math.floor(v) + (dither(x, y, v - Math.floor(v)) ? 1 : 0)) / 8;
+      if (!q) continue;
+      const i = y * CW + x;
+      LR[i] += c[0] * q; LG[i] += c[1] * q; LB[i] += c[2] * q;
     }
-    ctx.putImageData(img, 0, 0);
+  }
+  const solid = (x, y, c) => { if (x < 0 || y < 0 || x >= CW || y >= CH) return; const i = y * CW + x; R[i] = c[0]; G[i] = c[1]; B[i] = c[2]; Al[i] = 1; };
+
+  const SWEEP = 7.5;
+  const AL = [0, 0.1, 0.2, 0.32, 0.46];    // 뒤쪽 빛의 투명도 단계
+  function draw(t) {
+    Al.fill(0); LR.fill(0); LG.fill(0); LB.fill(0);
+    const breathe = 0.82 + 0.18 * Math.sin(t * 0.9);
+
+    // 1) 창 뒤에서 새어 나오는 빛살 + 보랏빛 후광 (반투명, 계단 디더)
+    for (let y = 0; y < CH; y++) for (let x = 0; x < CW; x++) {
+      const fx = x - OX, fy = y - OY;
+      if (fx >= 0 && fy >= 0 && fx < WE_W && fy < WE_H && base[fy * WE_W + fx]) continue;
+      const dx = x + 0.5 - RX, dy = y + 0.5 - RY, r = Math.hypot(dx, dy), ang = Math.atan2(dy, dx);
+      let ray = Math.pow(0.5 + 0.5 * Math.cos(ang * 12 + t * 0.12), 7) + 0.6 * Math.pow(0.5 + 0.5 * Math.cos(ang * 7 - t * 0.08 + 1), 9);
+      ray *= Math.max(0, 1 - r / 118) * (dy < 8 ? 1 : 0.35) * breathe;
+      const e = Math.hypot((fx - CX) / 92, (fy - 66) / 72);
+      const halo = Math.max(0, Math.min(1, (1.28 - e) / 0.34)) ** 2 * 0.62 * breathe;
+      const v = (ray * 0.7 + halo) * 4, k = Math.min(4, Math.floor(v) + (dither(x, y, v - Math.floor(v)) ? 1 : 0));
+      if (!k) continue;
+      const i = y * CW + x, warm = ray > halo;
+      R[i] = warm ? 232 : 110; G[i] = warm ? 200 : 76; B[i] = warm ? 150 : 210; Al[i] = AL[k];
+    }
+
+    // 2) 창틀 (유리를 지나가는 빛 + 장미창 맥동)
+    const ph = (t / SWEEP) % 1, band = -60 + ph * 2.2 * (WE_W + 120);
+    const pulse = 0.5 + 0.5 * Math.sin(t * 2.2);
+    for (let fy = 0; fy < WE_H; fy++) for (let fx = 0; fx < WE_W; fx++) {
+      const k = base[fy * WE_W + fx];
+      if (!k) continue;
+      let c = P[k];
+      if (glass[fy * WE_W + fx] && k !== 'lead') {
+        const d = fx + fy * 0.55 - band;
+        if (d > -5 && d < 5 && dither(fx, fy, (1 - Math.abs(d) / 5) * 0.9))
+          c = k === 'g4' || k === 'g3' ? P.g5 : k === 'g2' ? P.g4 : k === 'g1' || k === 'g0' ? P.g3 : k === 'blue' ? P.blueHi : k === 'rose' ? P.roseHi : c;
+      }
+      if (k === 'goldMid' && dither(fx, fy, pulse)) c = P.goldHi;
+      solid(fx + OX, fy + OY, c);
+    }
+    for (let i = 0; i < N; i++) { const k = ext[i]; if (k) { R[i] = P[k][0]; G[i] = P[k][1]; B[i] = P[k][2]; Al[i] = 1; } }
+
+    // 3) 장미창 빛 번짐
+    light(RX, RY, 24, [210, 120, 230], 0.22 + 0.1 * pulse);
+    light(RX, RY, 8, [255, 220, 140], 0.3 * pulse);
+
+    // 4) 촛불: 2~3도트 불꽃이 일렁이고 둘레를 데운다
+    for (const f of flames) {
+      const fl = Math.sin(t * 7.3 + f.p) + Math.sin(t * 13.1 + f.p * 2);
+      solid(f.x, f.y, [255, 236, 170]); solid(f.x + 1, f.y, fl > 0.4 ? [255, 236, 170] : [255, 170, 60]);
+      solid(f.x + (fl > 0 ? 1 : 0), f.y - 1, [255, 170, 60]);
+      if (fl > 0.8) solid(f.x + (fl > 1.4 ? 1 : 0), f.y - 2, [240, 110, 40]);
+      light(f.x + 1, f.y, 10 + fl, [255, 160, 70], 0.34);
+    }
+
+    // 5) 떠다니는 먼지: 천천히 오르며 깜빡인다
+    for (const m of motes) {
+      const y = ((m.y - t * m.sp) % CH + CH) % CH, x = Math.floor(m.x + Math.sin(t * 0.6 * m.s + m.p) * 4);
+      const tw = 0.5 + 0.5 * Math.sin(t * 1.7 * m.s + m.p);
+      if (tw < 0.35) continue;
+      const iy = Math.floor(y);
+      solid(x, iy, m.c.map(v => v * (0.6 + 0.4 * tw)));
+      if (tw > 0.9) light(x + 0.5, iy + 0.5, 3, m.c, 0.4);
+    }
+
+    // 6) 반짝임: 돌 가장자리와 납선 위에 가끔 십자 별
+    for (let n = 0; n < 4; n++) {
+      const cyc = t * 0.55 + n * 0.25, id = Math.floor(cyc), life = cyc - id;
+      if (life > 0.4) continue;
+      const [sx, sy] = spots[Math.floor(hash(id * 4 + n) * spots.length)] || [];
+      if (sx === undefined) continue;
+      const a = Math.sin(life / 0.4 * Math.PI), arm = a > 0.6 ? 2 : 1;
+      solid(sx, sy, [255, 255, 240]);
+      for (let q = 1; q <= arm; q++) for (const [ux, uy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) solid(sx + ux * q, sy + uy * q, q === 1 ? [255, 236, 170] : [200, 170, 255]);
+      light(sx + 0.5, sy + 0.5, 6, [255, 230, 180], 0.45 * a);
+    }
+
+    // 합치기: 투명한 곳에 더한 빛은 알파를 올려 보이게 한다
+    for (let i = 0; i < N; i++) {
+      let r = R[i], g = G[i], b = B[i], a = Al[i];
+      const lr = LR[i], lg = LG[i], lb = LB[i], o = i * 4;
+      if (lr || lg || lb) {
+        if (a < 1) {
+          const pr = r * a + lr, pg = g * a + lg, pb = b * a + lb, na = Math.min(1, Math.max(a, Math.max(lr, lg, lb) / 255));
+          if (na > 0) { r = pr / na; g = pg / na; b = pb / na; a = na; }
+        } else { r += lr; g += lg; b += lb; }
+      }
+      od[o] = r > 255 ? 255 : r; od[o + 1] = g > 255 ? 255 : g; od[o + 2] = b > 255 ? 255 : b; od[o + 3] = a * 255;
+    }
+    ctx.putImageData(out, 0, 0);
   }
 
   let raf = 0, last = 0;
   const loop = now => {
     raf = requestAnimationFrame(loop);
-    if (now - last < 110) return;          // 도트 애니메이션답게 9fps 정도로 끊는다
+    if (now - last < 100) return;          // 도트 애니메이션답게 10fps 정도로 끊는다
     last = now;
     draw(now / 1000);
   };
