@@ -4,6 +4,7 @@
 import { createBoarding, W, H } from './boarding.js';
 import { createBoardingGate, GATE } from './boarding-gate.js';
 import { RANK_KO, RANK_EN } from './rules.js';
+import { createTerminal } from './terminal.js';
 
 export function createBoardingScreen({ sfx }) {
   const root = document.querySelector('#boarding');
@@ -12,6 +13,8 @@ export function createBoardingScreen({ sfx }) {
   const stateEl = $('#bd-state'), verdictEl = $('#bd-verdict'), banner = $('#bd-banner');
   const checkBtn = $('#bd-check'), cancelBtn = $('#bd-cancel'), rankSel = $('#bd-rank');
   const shown = () => !root.hidden;
+  // 이동관리국과 같은 도트 단말 (홀과 비슷한 도트 크기)
+  createTerminal($('.device'), { root, getScale: () => Math.max(2, Math.round(innerHeight / 290)), isActive: shown });
 
   let req = null, resolve = null, busy = false, lastOk = false, timers = [], typing = null;
   const later = (fn, ms) => timers.push(setTimeout(fn, ms));

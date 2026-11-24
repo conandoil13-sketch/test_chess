@@ -490,3 +490,17 @@
 .sign b, .sign span { position: relative; }
 .sign b { animation: none; font-size: clamp(26px, 2.5vw, 44px); color: #f1dca6; text-shadow: 0 2px 0 #05040a, 0 0 8px rgba(255,200,120,.2); }
 .sign span { border-top: 0; padding-top: 7px; margin-top: 2px; color: #9ad6e4; text-shadow: 0 2px 0 #05040a; }
+
+/* ---------- 통행증 확인 단말: 도트로 찍은 케이스 (js/terminal.js) ----------
+   케이스·지붕·렌즈·베젤·CRT 화면·NFC 물결·스캔 빔은 캔버스가 그린다. 글자와 버튼만 HTML로 남긴다. */
+.device.term { background: none; border: 0; box-shadow: none; filter: drop-shadow(0 22px 26px rgba(0, 0, 0, .6)); }
+.device.term::before, .device.term::after { display: none; }
+.device.term > :not(.term-art) { position: relative; z-index: 1; }
+.term-art { position: absolute; left: 0; z-index: 0; image-rendering: pixelated; pointer-events: none; }
+.device.term .device-head { border-bottom: 0; }
+.device.term .led { visibility: hidden; }
+.device.term .screen { background: transparent; border-color: transparent; border-radius: 0; box-shadow: none; }
+.device.term .screen::after { display: none; }
+.device.term .nfc-idle i, .device.term .beam { display: none; }
+.device.term .screen-verdict { background: none !important; }
+.device.term .bd-who { background: transparent; border-color: transparent; }

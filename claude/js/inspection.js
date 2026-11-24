@@ -6,6 +6,7 @@ import { createBooth, createCounter, createSign } from './booth.js';
 import { N } from './world.js';
 import { createNave } from './nave.js';
 import { createLanterns } from './lanterns.js';
+import { createTerminal } from './terminal.js';
 
 const coord = p => `(${p.x + 1}, ${p.y + 1})`;
 const vec = (a, b) => {
@@ -33,6 +34,7 @@ export function createInspection({ sfx }) {
   createBooth($('.booth'), { getMood: hallState, isActive: shown, getScale: hallScale, officer: $('#officer') });
   createCounter($('.counter'), { getScale: hallScale, isActive: shown, getMood: hallState });
   createSign($('.sign'), { getScale: hallScale, isActive: shown, getMood: hallState, booth: $('.booth') });
+  createTerminal($('.device'), { root, getScale: hallScale, isActive: shown });
 
   let req = null, resolve = null, busy = false, stream = null, camReq = 0, timers = [], typing = null;
   const later = (fn, ms) => timers.push(setTimeout(fn, ms));
